@@ -1,3 +1,23 @@
+var _0x180a=[
+    '.hearts',
+    '.hearts',
+    '.background-decorations',
+    '.game-container',
+    'power1.out',
+    'love-meter-fill',
+    '.love-meter-text',
+    '.info-toggle',
+    '.info-popup',
+    '.info-popup-close',
+    '.overlay',
+    '.info-popup-content',
+    '.info-cards.left .info-card',
+    '.info-cards.right .info-card:not(.horoscope-card)',
+    '.horoscope-card',
+    '#horoscope-text',
+    'back.out(1.5)'
+];
+
 // Obfuscated version of main.js
 (function(_0x4c3d,_0x2c9d3f){
     var _0x4e4d3a=function(_0x5c97e4){
@@ -57,19 +77,24 @@ document['addEventListener']('DOMContentLoaded',function(){
     }
     document['addEventListener']('mousemove',function(_0x2c9d45){
         const _0x2c9d46=document['querySelector'](_0x4de5('0x3'));
-        const _0x2c9d47=(_0x2c9d45['clientX']/window['innerWidth']-0.5)*0xa;
-        const _0x2c9d48=(_0x2c9d45['clientY']/window['innerHeight']-0.5)*0xa;
-        gsap['to'](_0x2c9d46,{
-            'rotationY':_0x2c9d47*0.5,
-            'rotationX':-_0x2c9d48*0.5,
-            'transformPerspective':0x3e8,
-            'duration':0.5,
-            'ease':_0x4de5('0x4')
-        });
+        if(_0x2c9d46 && typeof gsap !== 'undefined') {
+            const _0x2c9d47=(_0x2c9d45['clientX']/window['innerWidth']-0.5)*0xa;
+            const _0x2c9d48=(_0x2c9d45['clientY']/window['innerHeight']-0.5)*0xa;
+            gsap['to'](_0x2c9d46,{
+                'rotationY':_0x2c9d47*0.5,
+                'rotationX':-_0x2c9d48*0.5,
+                'transformPerspective':0x3e8,
+                'duration':0.5,
+                'ease':'power1.out'
+            });
+        }
     });
     function _0x2c9d49(){
-        const _0x2c9d4a=document['getElementById'](_0x4de5('0x5'));
-        const _0x2c9d4b=document['querySelector'](_0x4de5('0x6'));
+        const _0x2c9d4a=document['getElementById']('love-meter-fill');
+        const _0x2c9d4b=document['querySelector']('.love-meter-text');
+        
+        if(!_0x2c9d4a || !_0x2c9d4b) return;
+        
         const _0x2c9d4c=Math['floor'](Math['random']()*0x65);
         _0x2c9d4a['style']['width']=`${_0x2c9d4c}%`;
         _0x2c9d4b['textContent']=`Aşk Enerjisi %${_0x2c9d4c}`;
@@ -108,17 +133,17 @@ document['addEventListener']('DOMContentLoaded',function(){
                 _0x2c9d5a['id']='popup-horoscope-text';
                 _0x2c9d59['addEventListener']('change',function(){
                     const _0x2c9d5b=this['value'];
-                    fetchAndTranslateHoroscope(_0x2c9d5b,_0x2c9d5a);
+                    _0x2c9d68(_0x2c9d5b,_0x2c9d5a);
                     const _0x2c9d5c=document['getElementById']('zodiac-select');
                     if(_0x2c9d5c&&_0x2c9d5c['value']!==_0x2c9d5b){
                         _0x2c9d5c['value']=_0x2c9d5b;
-                        fetchAndTranslateHoroscope(_0x2c9d5b,document['getElementById']('horoscope-text'));
+                        _0x2c9d68(_0x2c9d5b,document['getElementById']('horoscope-text'));
                     }
                 });
                 const _0x2c9d5d=document['getElementById']('zodiac-select');
                 if(_0x2c9d5d){
                     _0x2c9d59['value']=_0x2c9d5d['value'];
-                    fetchAndTranslateHoroscope(_0x2c9d5d['value'],_0x2c9d5a);
+                    _0x2c9d68(_0x2c9d5d['value'],_0x2c9d5a);
                 }
             }
             _0x2c9d51['appendChild'](_0x2c9d58);
@@ -128,33 +153,43 @@ document['addEventListener']('DOMContentLoaded',function(){
         _0x2c9d52();
         _0x2c9d4e['style']['display']='block';
         _0x2c9d50['style']['display']='block';
-        gsap['fromTo'](_0x2c9d4e,{
-            'opacity':0x0,
-            'scale':0.8
-        },{
-            'opacity':0x1,
-            'scale':0x1,
-            'duration':0.3,
-            'ease':_0x4de5('0x10')
-        });
+        if(typeof gsap !== 'undefined') {
+            gsap['fromTo'](_0x2c9d4e,{
+                'opacity':0x0,
+                'scale':0.8
+            },{
+                'opacity':0x1,
+                'scale':0x1,
+                'duration':0.3,
+                'ease':'back.out(1.5)'
+            });
+        }
     }
     function _0x2c9d5f(){
-        gsap['to'](_0x2c9d4e,{
-            'opacity':0x0,
-            'scale':0.8,
-            'duration':0.2,
-            'onComplete':()=>{
-                _0x2c9d4e['style']['display']='none';
-                _0x2c9d50['style']['display']='none';
-            }
-        });
+        if(typeof gsap !== 'undefined') {
+            gsap['to'](_0x2c9d4e,{
+                'opacity':0x0,
+                'scale':0.8,
+                'duration':0.2,
+                'onComplete':()=>{
+                    _0x2c9d4e['style']['display']='none';
+                    _0x2c9d50['style']['display']='none';
+                }
+            });
+        } else {
+            _0x2c9d4e['style']['display']='none';
+            _0x2c9d50['style']['display']='none';
+        }
     }
-    _0x2c9d4d['addEventListener']('click',_0x2c9d5e);
-    _0x2c9d4f['addEventListener']('click',_0x2c9d5f);
-    _0x2c9d50['addEventListener']('click',_0x2c9d5f);
+    if(_0x2c9d4d) _0x2c9d4d['addEventListener']('click',_0x2c9d5e);
+    if(_0x2c9d4f) _0x2c9d4f['addEventListener']('click',_0x2c9d5f);
+    if(_0x2c9d50) _0x2c9d50['addEventListener']('click',_0x2c9d5f);
+
+    // Burç bilgisi kısmı
     const _0x2c9d60=document['getElementById']('zodiac-select');
     const _0x2c9d61=document['getElementById']('horoscope-text');
-    if(_0x2c9d60&&_0x2c9d61){
+    
+    if(_0x2c9d60 && _0x2c9d61){
         function _0x2c9d62(_0x2c9d63){
             const _0x2c9d64={
                 'today':'bugün',
@@ -207,41 +242,84 @@ document['addEventListener']('DOMContentLoaded',function(){
             });
             return _0x2c9d65;
         }
+        
         function _0x2c9d68(_0x2c9d69,_0x2c9d6a){
-            fetch(`https://api.adviceslip.com/advice/search/${_0x2c9d69}`)
-                ['then'](_0x2c9d6b=>_0x2c9d6b['json']())
-                ['then'](_0x2c9d6c=>{
-                    const _0x2c9d6d=_0x2c9d6c['slips'][0x0]['advice'];
-                    const _0x2c9d6e=_0x2c9d62(_0x2c9d6d);
-                    _0x2c9d6a['textContent']=_0x2c9d6e;
-                })
-                ['catch'](_0x2c9d6f=>{
-                    _0x2c9d6a['textContent']='Üzgünüm, şu anda burç yorumu alınamıyor.';
-                });
+            if(!_0x2c9d6a) return;
+            
+            _0x2c9d6a['textContent']='Burç yorumu alınıyor...';
+            
+            // Sabit burç yorumları (fallback için)
+            const _0x2c9d6f = {
+                'aries': 'Bugün kendinizi enerjik hissedeceksiniz. Yeni başlangıçlar için iyi bir gün. İnisiyatif almaktan çekinmeyin ve cesaretinizi gösterin.',
+                'taurus': 'Bugün finansal konularda şanslı olabilirsiniz. Sabırlı olun ve maddi konulara odaklanın. Konfor alanınızı geliştirme vakti.',
+                'gemini': 'İletişim yetenekleriniz bugün çok güçlü. Arkadaşlarınızla vakit geçirin ve fikirlerinizi paylaşın. Sosyal ortamlarda parlamanın tam zamanı.',
+                'cancer': 'Duygusal konularda dikkatli olun. Ailenize zaman ayırın ve evde huzuru sağlayın. Sezgileriniz her zamankinden daha güçlü.',
+                'leo': 'Yaratıcılığınız dorukta. Kendinizi ifade edin ve göz önünde olun. Liderlik pozisyonları için uygun bir gün.',
+                'virgo': 'Detaylara dikkat edin. İş hayatınızda başarılı olacaksınız. Organizasyon yeteneklerinizi kullanın ve kusursuzluğu arayın.',
+                'libra': 'İlişkilerinizde denge kurun. Estetik zevkiniz artacak. Diplomatik yaklaşımlarınız iş ve özel hayatınızda fayda sağlayacak.',
+                'scorpio': 'Sırlar ortaya çıkabilir. İçgüdülerinize güvenin ve derinlemesine araştırın. Tutkularınızı kontrol altında tutun.',
+                'sagittarius': 'Macera aramanın tam zamanı. Ufkunuzu genişletin ve yeni felsefeler keşfedin. Seyahat planları yapmak için uygun bir gün.',
+                'capricorn': 'Kariyer hedeflerinize odaklanın. Çalışkanlığınız ödüllendirilecek. Disiplininiz sayesinde hedeflerinize adım adım yaklaşıyorsunuz.',
+                'aquarius': 'Yeni fikirler geliştireceksiniz. Farklı bakış açıları edinecek ve sıra dışı çözümler bulacaksınız. Toplumsal konulara ilgi artıyor.',
+                'pisces': 'Sezgileriniz güçlü. Sanatsal aktivitelere yönelin ve hayal gücünüzü kullanın. Manevi konularda ilerleme kaydedeceksiniz.'
+            };
+            
+            // CORS hatalarını aşmak için CORS proxy kullanıyoruz
+            const _0x2c9d70 = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://aztro.sameerkumar.website/?sign=${_0x2c9d69}&day=today`)}`;
+            
+            fetch(_0x2c9d70, {
+                method: 'POST'
+            })
+            .then(_0x2c9d71 => _0x2c9d71.json())
+            .then(_0x2c9d72 => {
+                // API'den gelen burç yorumunu çevir ve göster
+                if(_0x2c9d72 && _0x2c9d72.description) {
+                    const _0x2c9d73 = _0x2c9d62(_0x2c9d72.description);
+                    _0x2c9d6a['textContent'] = _0x2c9d73;
+                } else {
+                    throw new Error('API yanıtı beklenen formatta değil');
+                }
+            })
+            .catch(_0x2c9d74 => {
+                console.log('Burç yorumu alınamadı:', _0x2c9d74);
+                // Hata durumunda yerel yorumları göster
+                _0x2c9d6a['textContent'] = _0x2c9d6f[_0x2c9d69] || 'Burcunuz için yorum bulunamadı.';
+                
+                // Üçüncü bir kaynak daha deneyelim (yedek)
+                setTimeout(() => {
+                    const _0x2c9d75 = `https://cors-anywhere.herokuapp.com/https://horoscope-api.herokuapp.com/horoscope/today/${_0x2c9d69}`;
+                    fetch(_0x2c9d75)
+                    .then(_0x2c9d76 => _0x2c9d76.json())
+                    .then(_0x2c9d77 => {
+                        if(_0x2c9d77 && _0x2c9d77.horoscope) {
+                            const _0x2c9d78 = _0x2c9d62(_0x2c9d77.horoscope);
+                            _0x2c9d6a['textContent'] = _0x2c9d78;
+                        }
+                    })
+                    .catch(() => {
+                        // İkinci API de başarısız olursa zaten yerel yorum gösterilmiş olacak
+                    });
+                }, 1000);
+            });
         }
+        
+        // Sayfa yüklendiğinde ilk burç yorumunu al
+        if(_0x2c9d60['value']){
+            _0x2c9d68(_0x2c9d60['value'],_0x2c9d61);
+        }
+        
         _0x2c9d60['addEventListener']('change',function(){
-            const _0x2c9d70=this['value'];
-            _0x2c9d68(_0x2c9d70,_0x2c9d61);
+            const _0x2c9d72=this['value'];
+            if(_0x2c9d72){
+                _0x2c9d68(_0x2c9d72,_0x2c9d61);
+            }
         });
+        
+        // Burç yorumlarını otomatik olarak güncelle (her saat)
+        setInterval(() => {
+            if(_0x2c9d60 && _0x2c9d60['value']){
+                _0x2c9d68(_0x2c9d60['value'], _0x2c9d61);
+            }
+        }, 3600000); // Her saat (3600000 ms)
     }
-});
-
-var _0x180a=[
-    '.hearts',
-    '.hearts',
-    '.background-decorations',
-    '.game-container',
-    'power1.out',
-    'love-meter-fill',
-    '.love-meter-text',
-    '.info-toggle',
-    '.info-popup',
-    '.info-popup-close',
-    '.overlay',
-    '.info-popup-content',
-    '.info-cards.left .info-card',
-    '.info-cards.right .info-card:not(.horoscope-card)',
-    '.horoscope-card',
-    '#horoscope-text',
-    'back.out(1.5)'
-]; 
+}); 
