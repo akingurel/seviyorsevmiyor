@@ -251,52 +251,86 @@ document['addEventListener']('DOMContentLoaded',function(){
             
             _0x2c9d6a['textContent']='Burç yorumu alınıyor... ✨';
             
-            // API'ye doğrudan bağlan
-            const apiUrl = `https://aztro.sameerkumar.website/?sign=${_0x2c9d69}&day=today`;
+            // Farklı CORS proxy kullan
+            const corsProxy = 'https://api.allorigins.win/get?url=';
+            const apiUrl = `${corsProxy}${encodeURIComponent(`https://aztro.sameerkumar.website/?sign=${_0x2c9d69}&day=today`)}`;
             
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
+            fetch(apiUrl)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Burç bilgisi alınamadı');
                 }
                 return response.json();
             })
-            .then(data => {
-                if (data && data.description) {
-                    const translatedText = _0x2c9d62(data.description);
-                    _0x2c9d6a['textContent'] = translatedText;
+            .then(outerData => {
+                if (outerData && outerData.contents) {
+                    const data = JSON.parse(outerData.contents);
+                    if (data && data.description) {
+                        const translatedText = _0x2c9d62(data.description);
+                        _0x2c9d6a['textContent'] = translatedText;
+                    } else {
+                        _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
+                    }
                 } else {
-                    _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
+                    throw new Error('Geçersiz yanıt formatı');
                 }
             })
             .catch(error => {
                 console.error('Burç bilgisi alınırken hata oluştu:', error);
-                // Birincil API başarısız olursa, alternatif API'yi dene
-                const backupApiUrl = `https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${_0x2c9d69}&day=TODAY`;
                 
-                fetch(backupApiUrl)
+                // İkinci bir CORS proxy dene
+                const secondProxy = 'https://cors-anywhere.herokuapp.com/';
+                const secondApiUrl = `${secondProxy}https://aztro.sameerkumar.website/?sign=${_0x2c9d69}&day=today`;
+                
+                fetch(secondApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Content-Type': 'application/json'
+                    }
+                })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Alternatif API\'den de burç bilgisi alınamadı');
+                        throw new Error('İkinci proxy ile de burç bilgisi alınamadı');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    if (data && data.data && data.data.horoscope_data) {
-                        const translatedText = _0x2c9d62(data.data.horoscope_data);
+                    if (data && data.description) {
+                        const translatedText = _0x2c9d62(data.description);
                         _0x2c9d6a['textContent'] = translatedText;
                     } else {
                         _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
                     }
                 })
                 .catch(finalError => {
-                    console.error('Alternatif API\'den de burç bilgisi alınamadı:', finalError);
-                    _0x2c9d6a['textContent'] = 'Burç bilgisi şu anda alınamıyor 😔 Lütfen daha sonra tekrar deneyin.';
+                    console.error('Tüm proxy denemelerinde hata oluştu:', finalError);
+                    
+                    // Farklı bir horoscope API'sini dene
+                    const altApiUrl = `https://www.horoscopes-and-astrology.com/json`;
+                    
+                    fetch(altApiUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Alternatif API\'den de burç bilgisi alınamadı');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data && data.dailyhoroscope && data.dailyhoroscope[_0x2c9d69]) {
+                            const horoscopeText = data.dailyhoroscope[_0x2c9d69];
+                            // HTML etiketlerini temizle
+                            const cleanText = horoscopeText.replace(/<\/?[^>]+(>|$)/g, "");
+                            const translatedText = _0x2c9d62(cleanText);
+                            _0x2c9d6a['textContent'] = translatedText;
+                        } else {
+                            _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
+                        }
+                    })
+                    .catch(lastError => {
+                        console.error('Tüm API denemelerinde hata oluştu:', lastError);
+                        _0x2c9d6a['textContent'] = 'Burç bilgisi şu anda çekilemiyor 😔 Lütfen daha sonra tekrar deneyin.';
+                    });
                 });
             });
         }
