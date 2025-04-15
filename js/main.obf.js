@@ -195,48 +195,48 @@ document['addEventListener']('DOMContentLoaded',function(){
     if(_0x2c9d60 && _0x2c9d61){
         function _0x2c9d62(_0x2c9d63){
             const _0x2c9d64={
-                'today':'bugün',
-                'you':'sen',
-                'your':'senin',
-                'will':'olacak',
-                'may':'olabilir',
-                'might':'olabilir',
-                'could':'olabilir',
-                'should':'gerekir',
-                'would':'olurdu',
-                'can':'yapabilirsin',
-                'friends':'arkadaşlar',
-                'family':'aile',
-                'love':'aşk',
-                'work':'iş',
-                'money':'para',
-                'time':'zaman',
-                'day':'gün',
-                'energy':'enerji',
-                'luck':'şans',
-                'opportunity':'fırsat',
-                'challenge':'zorluk',
-                'relationship':'ilişki',
-                'partner':'partner',
-                'need':'ihtiyaç',
-                'focus':'odak',
-                'change':'değişim',
-                'success':'başarı',
-                'feel':'hisset',
-                'feeling':'his',
-                'emotions':'duygular',
-                'emotional':'duygusal',
-                'happy':'mutlu',
-                'sad':'üzgün',
-                'heart':'kalp',
-                'mind':'zihin',
-                'think':'düşün',
-                'important':'önemli',
-                'life':'hayat',
-                'future':'gelecek',
-                'past':'geçmiş',
-                'present':'şimdiki zaman',
-                'plans':'planlar'
+                'today':'bugün 📅',
+                'you':'sen 👤',
+                'your':'senin 👉',
+                'will':'olacak ✨',
+                'may':'olabilir 🤔',
+                'might':'olabilir 🤷‍♂️',
+                'could':'olabilir 💭',
+                'should':'gerekir ⚠️',
+                'would':'olurdu 💫',
+                'can':'yapabilirsin ✅',
+                'friends':'arkadaşlar 👫',
+                'family':'aile 👨‍👩‍👧‍👦',
+                'love':'aşk ❤️',
+                'work':'iş 💼',
+                'money':'para 💰',
+                'time':'zaman ⏰',
+                'day':'gün 📆',
+                'energy':'enerji ⚡',
+                'luck':'şans 🍀',
+                'opportunity':'fırsat 🎯',
+                'challenge':'zorluk 🏋️‍♂️',
+                'relationship':'ilişki 💑',
+                'partner':'partner 👫',
+                'need':'ihtiyaç 🙏',
+                'focus':'odak 🎯',
+                'change':'değişim 🔄',
+                'success':'başarı 🏆',
+                'feel':'hisset 👐',
+                'feeling':'his 💭',
+                'emotions':'duygular 😊',
+                'emotional':'duygusal 😢',
+                'happy':'mutlu 😄',
+                'sad':'üzgün 😔',
+                'heart':'kalp ❤️',
+                'mind':'zihin 🧠',
+                'think':'düşün 💭',
+                'important':'önemli ⭐',
+                'life':'hayat 🌈',
+                'future':'gelecek 🔮',
+                'past':'geçmiş 📜',
+                'present':'şimdiki zaman ⏱️',
+                'plans':'planlar 📝'
             };
             let _0x2c9d65=_0x2c9d63;
             Object['keys'](_0x2c9d64)['forEach'](_0x2c9d66=>{
@@ -249,28 +249,33 @@ document['addEventListener']('DOMContentLoaded',function(){
         function _0x2c9d68(_0x2c9d69,_0x2c9d6a){
             if(!_0x2c9d6a) return;
             
-            _0x2c9d6a['textContent']='Burç yorumu alınıyor...';
+            _0x2c9d6a['textContent']='Burç yorumu alınıyor... ✨';
             
-            // Sabit burç yorumları
-            const _0x2c9d6f = {
-                'aries': 'Bugün kendinizi enerjik hissedeceksiniz. Yeni başlangıçlar için iyi bir gün. İnisiyatif almaktan çekinmeyin ve cesaretinizi gösterin.',
-                'taurus': 'Bugün finansal konularda şanslı olabilirsiniz. Sabırlı olun ve maddi konulara odaklanın. Konfor alanınızı geliştirme vakti.',
-                'gemini': 'İletişim yetenekleriniz bugün çok güçlü. Arkadaşlarınızla vakit geçirin ve fikirlerinizi paylaşın. Sosyal ortamlarda parlamanın tam zamanı.',
-                'cancer': 'Duygusal konularda dikkatli olun. Ailenize zaman ayırın ve evde huzuru sağlayın. Sezgileriniz her zamankinden daha güçlü.',
-                'leo': 'Yaratıcılığınız dorukta. Kendinizi ifade edin ve göz önünde olun. Liderlik pozisyonları için uygun bir gün.',
-                'virgo': 'Detaylara dikkat edin. İş hayatınızda başarılı olacaksınız. Organizasyon yeteneklerinizi kullanın ve kusursuzluğu arayın.',
-                'libra': 'İlişkilerinizde denge kurun. Estetik zevkiniz artacak. Diplomatik yaklaşımlarınız iş ve özel hayatınızda fayda sağlayacak.',
-                'scorpio': 'Sırlar ortaya çıkabilir. İçgüdülerinize güvenin ve derinlemesine araştırın. Tutkularınızı kontrol altında tutun.',
-                'sagittarius': 'Macera aramanın tam zamanı. Ufkunuzu genişletin ve yeni felsefeler keşfedin. Seyahat planları yapmak için uygun bir gün.',
-                'capricorn': 'Kariyer hedeflerinize odaklanın. Çalışkanlığınız ödüllendirilecek. Disiplininiz sayesinde hedeflerinize adım adım yaklaşıyorsunuz.',
-                'aquarius': 'Yeni fikirler geliştireceksiniz. Farklı bakış açıları edinecek ve sıra dışı çözümler bulacaksınız. Toplumsal konulara ilgi artıyor.',
-                'pisces': 'Sezgileriniz güçlü. Sanatsal aktivitelere yönelin ve hayal gücünüzü kullanın. Manevi konularda ilerleme kaydedeceksiniz.'
-            };
+            // Burç yorumlarını internetten al
+            const corsProxy = 'https://corsproxy.io/?';
+            const apiUrl = `${corsProxy}https://aztro.sameerkumar.website/?sign=${_0x2c9d69}&day=today`;
             
-            // Yükleniyor animasyonu için kısa bir gecikme
-            setTimeout(() => {
-                _0x2c9d6a['textContent'] = _0x2c9d6f[_0x2c9d69] || 'Burcunuz için yorum bulunamadı.';
-            }, 500);
+            fetch(apiUrl, {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Burç bilgisi alınamadı');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.description) {
+                    const translatedText = _0x2c9d62(data.description);
+                    _0x2c9d6a['textContent'] = translatedText;
+                } else {
+                    _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
+                }
+            })
+            .catch(error => {
+                console.error('Burç bilgisi alınırken hata oluştu:', error);
+                _0x2c9d6a['textContent'] = 'Burç bilgisi şu anda alınamıyor 😔 Lütfen daha sonra tekrar deneyin.';
+            });
         }
         
         // Sayfa yüklendiğinde ilk burç yorumunu al
