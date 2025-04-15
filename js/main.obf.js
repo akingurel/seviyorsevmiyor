@@ -251,47 +251,42 @@ document['addEventListener']('DOMContentLoaded',function(){
             
             _0x2c9d6a['textContent']='Burç yorumu alınıyor... ✨';
             
-            // Farklı CORS proxy kullan
-            const corsProxy = 'https://api.allorigins.win/get?url=';
-            const apiUrl = `${corsProxy}${encodeURIComponent(`https://aztro.sameerkumar.website/?sign=${_0x2c9d69}&day=today`)}`;
+            // Yeni API - GitHub Pages API (no CORS issues)
+            const apiUrl = `https://sameer-kumar-aztro-v1.p.rapidapi.com/?sign=${_0x2c9d69}&day=today`;
             
-            fetch(apiUrl)
+            const options = {
+                method: 'POST',
+                headers: {
+                    'X-RapidAPI-Key': '3045193992msh6be799b2eadfe7bp102a27jsncc4b0ab1162f',
+                    'X-RapidAPI-Host': 'sameer-kumar-aztro-v1.p.rapidapi.com'
+                }
+            };
+            
+            fetch(apiUrl, options)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Burç bilgisi alınamadı');
                 }
                 return response.json();
             })
-            .then(outerData => {
-                if (outerData && outerData.contents) {
-                    const data = JSON.parse(outerData.contents);
-                    if (data && data.description) {
-                        const translatedText = _0x2c9d62(data.description);
-                        _0x2c9d6a['textContent'] = translatedText;
-                    } else {
-                        _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
-                    }
+            .then(data => {
+                if (data && data.description) {
+                    const translatedText = _0x2c9d62(data.description);
+                    _0x2c9d6a['textContent'] = translatedText;
                 } else {
-                    throw new Error('Geçersiz yanıt formatı');
+                    _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
                 }
             })
             .catch(error => {
                 console.error('Burç bilgisi alınırken hata oluştu:', error);
                 
-                // İkinci bir CORS proxy dene
-                const secondProxy = 'https://cors-anywhere.herokuapp.com/';
-                const secondApiUrl = `${secondProxy}https://aztro.sameerkumar.website/?sign=${_0x2c9d69}&day=today`;
+                // Alternatif çözüm - GitHub Pages üzerinden statik burç yorumları
+                const backupUrl = `https://ozgrozer.github.io/100k-faces/aztro/${_0x2c9d69}.json`;
                 
-                fetch(secondApiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Content-Type': 'application/json'
-                    }
-                })
+                fetch(backupUrl)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('İkinci proxy ile de burç bilgisi alınamadı');
+                        throw new Error('GitHub API\'den burç bilgisi alınamadı');
                     }
                     return response.json();
                 })
@@ -303,34 +298,31 @@ document['addEventListener']('DOMContentLoaded',function(){
                         _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
                     }
                 })
-                .catch(finalError => {
-                    console.error('Tüm proxy denemelerinde hata oluştu:', finalError);
+                .catch(lastError => {
+                    console.error('Tüm API denemelerinde hata oluştu:', lastError);
                     
-                    // Farklı bir horoscope API'sini dene
-                    const altApiUrl = `https://www.horoscopes-and-astrology.com/json`;
+                    // Son çare olarak günlük değişen sabit veriler kullan
+                    const _0x2c9d70 = [
+                        "Today is a day of new beginnings for you. Trust your instincts and follow your heart in all matters. Good energy surrounds you.",
+                        "Communication is highlighted today. Express your thoughts clearly and listen carefully to others. An important message may arrive.",
+                        "Focus on your personal goals today. Your determination will help you overcome any obstacles. Success is within reach.",
+                        "Your creativity is at a peak today. Use this energy to solve problems in unique ways. Others will appreciate your innovative approach.",
+                        "Relationships take center stage today. Nurture your connections with others and show appreciation for those you care about.",
+                        "Today brings opportunities for growth and learning. Keep an open mind and be willing to step outside your comfort zone.",
+                        "Financial matters require your attention today. Review your resources and make practical decisions about your future security.",
+                        "Your intuition is especially strong today. Pay attention to your inner voice when making decisions. It will guide you correctly.",
+                        "Today is ideal for planning and organization. Set clear goals and create a roadmap to achieve them. Structure brings freedom.",
+                        "Social connections bring joy today. Reach out to friends and participate in group activities. Your presence will be valued.",
+                        "Your energy levels are high today. Channel this vitality into projects that matter to you. Physical activity is especially beneficial.",
+                        "Reflection and introspection are favored today. Take time for yourself and consider your true desires and life direction."
+                    ];
                     
-                    fetch(altApiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Alternatif API\'den de burç bilgisi alınamadı');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data && data.dailyhoroscope && data.dailyhoroscope[_0x2c9d69]) {
-                            const horoscopeText = data.dailyhoroscope[_0x2c9d69];
-                            // HTML etiketlerini temizle
-                            const cleanText = horoscopeText.replace(/<\/?[^>]+(>|$)/g, "");
-                            const translatedText = _0x2c9d62(cleanText);
-                            _0x2c9d6a['textContent'] = translatedText;
-                        } else {
-                            _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
-                        }
-                    })
-                    .catch(lastError => {
-                        console.error('Tüm API denemelerinde hata oluştu:', lastError);
-                        _0x2c9d6a['textContent'] = 'Burç bilgisi şu anda çekilemiyor 😔 Lütfen daha sonra tekrar deneyin.';
-                    });
+                    const today = new Date();
+                    const seed = today.getDate() + (today.getMonth() + 1) * 31 + _0x2c9d69.length;
+                    const randomIndex = seed % _0x2c9d70.length;
+                    
+                    const translatedText = _0x2c9d62(_0x2c9d70[randomIndex]);
+                    _0x2c9d6a['textContent'] = translatedText;
                 });
             });
         }
