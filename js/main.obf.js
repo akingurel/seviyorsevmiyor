@@ -251,18 +251,18 @@ document['addEventListener']('DOMContentLoaded',function(){
             
             _0x2c9d6a['textContent']='Burç yorumu alınıyor... ✨';
             
-            // Türkçe burç yorumları için API
-            fetch(`https://burc-yorumlari.vercel.app/api/daily?sign=${_0x2c9d69}`)
+            // Burç yorumlarını GitHub Pages üzerinden al (CORS sınırlaması yok)
+            fetch(`https://raw.githubusercontent.com/mdikcinar/burclar-api/main/burclar/gunluk/${_0x2c9d69_to_tr(_0x2c9d69)}.json`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Burç bilgisi alınamadı');
+                    throw new Error('GitHub\'dan burç bilgisi alınamadı');
                 }
                 return response.json();
             })
             .then(data => {
-                if (data && data.description) {
-                    // Zaten Türkçe olduğu için çeviriye gerek yok
-                    _0x2c9d6a['textContent'] = data.description;
+                if (data && data.yorum) {
+                    // Veri Türkçe olarak doğrudan kullanılabilir
+                    _0x2c9d6a['textContent'] = data.yorum;
                 } else {
                     _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
                 }
@@ -270,74 +270,39 @@ document['addEventListener']('DOMContentLoaded',function(){
             .catch(error => {
                 console.error('Burç bilgisi alınırken hata oluştu:', error);
                 
-                // Yedek çözüm: İngilizce yorumları al ve çevir
-                fetch(`https://horoscope-api.vercel.app/api/v1/daily/${_0x2c9d69}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('İkinci API\'den burç bilgisi alınamadı');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && data.horoscope) {
-                        const translatedText = _0x2c9d62(data.horoscope);
-                        _0x2c9d6a['textContent'] = translatedText;
-                    } else {
-                        _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
-                    }
-                })
-                .catch(finalError => {
-                    console.error('Tüm API denemelerinde hata oluştu:', finalError);
-                    
-                    // Son çare: Burclar.app'dan veri al (Türkçe API)
-                    fetch(`https://api.burclar.app/gunluk-burc-yorumu/${_0x2c9d69_to_tr(_0x2c9d69)}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Türkçe API\'den burç bilgisi alınamadı');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data && data.yorum) {
-                            _0x2c9d6a['textContent'] = data.yorum;
-                        } else {
-                            _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
-                        }
-                    })
-                    .catch(lastError => {
-                        // Yine başarısız olursa, güvenilir günlük veri göster
-                        console.error('Tüm API denemeleri başarısız:', lastError);
-                        const _0x2c9d70 = [
-                            "Today is a day of new beginnings for you. Trust your instincts and follow your heart in all matters. Good energy surrounds you.",
-                            "Communication is highlighted today. Express your thoughts clearly and listen carefully to others. An important message may arrive.",
-                            "Focus on your personal goals today. Your determination will help you overcome any obstacles. Success is within reach.",
-                            "Your creativity is at a peak today. Use this energy to solve problems in unique ways. Others will appreciate your innovative approach.",
-                            "Relationships take center stage today. Nurture your connections with others and show appreciation for those you care about.",
-                            "Today brings opportunities for growth and learning. Keep an open mind and be willing to step outside your comfort zone.",
-                            "Financial matters require your attention today. Review your resources and make practical decisions about your future security.",
-                            "Your intuition is especially strong today. Pay attention to your inner voice when making decisions. It will guide you correctly.",
-                            "Today is ideal for planning and organization. Set clear goals and create a roadmap to achieve them. Structure brings freedom.",
-                            "Social connections bring joy today. Reach out to friends and participate in group activities. Your presence will be valued.",
-                            "Your energy levels are high today. Channel this vitality into projects that matter to you. Physical activity is especially beneficial.",
-                            "Reflection and introspection are favored today. Take time for yourself and consider your true desires and life direction.",
-                            "A surprise is coming your way. Be open to unexpected opportunities that might change your perspective on an important matter.",
-                            "Your personal magnetism is strong today. Others are drawn to your confidence and charisma. Use this influence wisely.",
-                            "Take time to appreciate the beauty around you. Connecting with nature or art will rejuvenate your spirit and inspire creativity.",
-                            "Today is favorable for resolving conflicts. Your diplomatic skills will help you find common ground in challenging situations.",
-                            "Focus on self-care today. Taking care of your physical and emotional needs will give you the energy to tackle upcoming challenges.",
-                            "Your analytical abilities are enhanced today. Complex problems become clearer when you approach them with logical thinking.",
-                            "Trust your first impressions today. Your ability to quickly assess situations is particularly strong and will guide you correctly.",
-                            "A past connection may resurface. This reunion offers an opportunity for healing or for gaining a new perspective on your journey."
-                        ];
-                        
-                        const today = new Date();
-                        const seed = today.getDate() + (today.getMonth() + 1) * 31 + _0x2c9d69.length;
-                        const randomIndex = seed % _0x2c9d70.length;
-                        
-                        const translatedText = _0x2c9d62(_0x2c9d70[randomIndex]);
-                        _0x2c9d6a['textContent'] = translatedText;
-                    });
-                });
+                // GitHub'dan alınamazsa sabit Türkçe yorumlara dön
+                console.log('GitHub\'dan veri alınamadı, sabit verilere geçiliyor');
+                
+                // Türkçe sabit veriler
+                const _0x2c9d70 = [
+                    "Bugün yeni başlangıçlar için ideal. İçgüdülerine güven ve tüm konularda kalbini dinle. Etrafında pozitif enerji var. 🌟",
+                    "İletişim bugün öne çıkıyor. Düşüncelerini net ifade et ve başkalarını dikkatle dinle. Önemli bir mesaj gelebilir. 💬",
+                    "Bugün kişisel hedeflerine odaklan. Kararlılığın sayesinde her engelin üstesinden gelebilirsin. Başarı ulaşılabilir durumda. 🎯",
+                    "Yaratıcılığın bugün zirvede. Bu enerjiyi problemleri çözmek için kullan. Diğerleri senin yenilikçi yaklaşımını takdir edecek. ✨",
+                    "İlişkiler bugün merkez sahneyi alıyor. Bağlantılarını besle ve önemsediğin kişilere takdirini göster. ❤️",
+                    "Bugün büyüme ve öğrenme fırsatları getiriyor. Açık fikirli ol ve konfor alanının dışına çıkmaya istekli ol. 🌱",
+                    "Finansal konular bugün dikkatini gerektiriyor. Kaynaklarını gözden geçir ve geleceğin için pratik kararlar al. 💰",
+                    "Sezgilerin bugün özellikle güçlü. Karar verirken iç sesini dinle. Seni doğru yönlendirecektir. 🧠",
+                    "Bugün planlama ve organizasyon için ideal. Net hedefler belirle ve bunlara ulaşmak için bir yol haritası oluştur. 📝",
+                    "Sosyal bağlantılar bugün mutluluk getiriyor. Arkadaşlarına ulaş ve grup aktivitelerine katıl. Varlığın değer görecek. 👥",
+                    "Enerji seviyen bugün yüksek. Bu canlılığı sana önemli gelen projelere yönlendir. Fiziksel aktivite özellikle faydalı olacak. ⚡",
+                    "Bugün düşünce ve içe bakış için uygun. Kendine zaman ayır ve gerçek arzularını ve yaşam yönünü düşün. 🧘‍♀️",
+                    "Bir sürpriz yolda geliyor. Önemli bir konudaki bakış açını değiştirebilecek beklenmedik fırsatlara açık ol. 🎁",
+                    "Kişisel çekiciliğin bugün güçlü. Diğerleri senin özgüvenine ve karizmanla çekiliyor. Bu etkiyi bilgece kullan. ✨",
+                    "Çevrende güzelliğin tadını çıkarmak için zaman ayır. Doğa veya sanatla bağlantı kurmak ruhunu canlandıracak ve yaratıcılığını teşvik edecek. 🌿",
+                    "Bugün anlaşmazlıkları çözmek için uygun. Diplomatik becerilerin zorlu durumlarda ortak zemin bulmanı sağlayacak. 🤝",
+                    "Bugün kendine bakıma odaklan. Fiziksel ve duygusal ihtiyaçlarına bakmak, yaklaşan zorluklarla başa çıkmak için enerji verecek. 🛀",
+                    "Analitik yeteneklerin bugün artıyor. Karmaşık problemler, onlara mantıklı düşünceyle yaklaştığında daha netleşiyor. 🔍",
+                    "Bugün ilk izlenimlerine güven. Durumları hızlı değerlendirme yeteneğin özellikle güçlü ve seni doğru yönlendirecek. 👁️",
+                    "Geçmişteki bir bağlantı tekrar ortaya çıkabilir. Bu yeniden birleşme, iyileşme veya yolculuğunla ilgili yeni bir bakış açısı kazanma fırsatı sunuyor. 🔄"
+                ];
+                
+                // Günün tarihine göre deterministik bir seçim
+                const today = new Date();
+                const seed = today.getDate() + (today.getMonth() + 1) * 31 + _0x2c9d69.length;
+                const randomIndex = seed % _0x2c9d70.length;
+                
+                _0x2c9d6a['textContent'] = _0x2c9d70[randomIndex];
             });
         }
         
