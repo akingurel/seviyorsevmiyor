@@ -1,22 +1,25 @@
-var _0x180a=[
-    '.hearts',
-    '.hearts',
-    '.background-decorations',
-    '.game-container',
-    'power1.out',
-    'love-meter-fill',
-    '.love-meter-text',
-    '.info-toggle',
-    '.info-popup',
-    '.info-popup-close',
-    '.overlay',
-    '.info-popup-content',
-    '.info-cards.left .info-card',
-    '.info-cards.right .info-card:not(.horoscope-card)',
-    '.horoscope-card',
-    '#horoscope-text',
-    'back.out(1.5)'
-];
+// Önce _0x180a dizisini tanımla
+if (typeof _0x180a === 'undefined') {
+    var _0x180a=[
+        '.hearts',
+        '.hearts',
+        '.background-decorations',
+        '.game-container',
+        'power1.out',
+        'love-meter-fill',
+        '.love-meter-text',
+        '.info-toggle',
+        '.info-popup',
+        '.info-popup-close',
+        '.overlay',
+        '.info-popup-content',
+        '.info-cards.left .info-card',
+        '.info-cards.right .info-card:not(.horoscope-card)',
+        '.horoscope-card',
+        '#horoscope-text',
+        'back.out(1.5)'
+    ];
+}
 
 // Obfuscated version of main.js
 (function(_0x4c3d,_0x2c9d3f){
@@ -248,7 +251,7 @@ document['addEventListener']('DOMContentLoaded',function(){
             
             _0x2c9d6a['textContent']='Burç yorumu alınıyor...';
             
-            // Sabit burç yorumları (fallback için)
+            // Sabit burç yorumları
             const _0x2c9d6f = {
                 'aries': 'Bugün kendinizi enerjik hissedeceksiniz. Yeni başlangıçlar için iyi bir gün. İnisiyatif almaktan çekinmeyin ve cesaretinizi gösterin.',
                 'taurus': 'Bugün finansal konularda şanslı olabilirsiniz. Sabırlı olun ve maddi konulara odaklanın. Konfor alanınızı geliştirme vakti.',
@@ -264,43 +267,10 @@ document['addEventListener']('DOMContentLoaded',function(){
                 'pisces': 'Sezgileriniz güçlü. Sanatsal aktivitelere yönelin ve hayal gücünüzü kullanın. Manevi konularda ilerleme kaydedeceksiniz.'
             };
             
-            // CORS hatalarını aşmak için CORS proxy kullanıyoruz
-            const _0x2c9d70 = `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://aztro.sameerkumar.website/?sign=${_0x2c9d69}&day=today`)}`;
-            
-            fetch(_0x2c9d70, {
-                method: 'POST'
-            })
-            .then(_0x2c9d71 => _0x2c9d71.json())
-            .then(_0x2c9d72 => {
-                // API'den gelen burç yorumunu çevir ve göster
-                if(_0x2c9d72 && _0x2c9d72.description) {
-                    const _0x2c9d73 = _0x2c9d62(_0x2c9d72.description);
-                    _0x2c9d6a['textContent'] = _0x2c9d73;
-                } else {
-                    throw new Error('API yanıtı beklenen formatta değil');
-                }
-            })
-            .catch(_0x2c9d74 => {
-                console.log('Burç yorumu alınamadı:', _0x2c9d74);
-                // Hata durumunda yerel yorumları göster
+            // Yükleniyor animasyonu için kısa bir gecikme
+            setTimeout(() => {
                 _0x2c9d6a['textContent'] = _0x2c9d6f[_0x2c9d69] || 'Burcunuz için yorum bulunamadı.';
-                
-                // Üçüncü bir kaynak daha deneyelim (yedek)
-                setTimeout(() => {
-                    const _0x2c9d75 = `https://cors-anywhere.herokuapp.com/https://horoscope-api.herokuapp.com/horoscope/today/${_0x2c9d69}`;
-                    fetch(_0x2c9d75)
-                    .then(_0x2c9d76 => _0x2c9d76.json())
-                    .then(_0x2c9d77 => {
-                        if(_0x2c9d77 && _0x2c9d77.horoscope) {
-                            const _0x2c9d78 = _0x2c9d62(_0x2c9d77.horoscope);
-                            _0x2c9d6a['textContent'] = _0x2c9d78;
-                        }
-                    })
-                    .catch(() => {
-                        // İkinci API de başarısız olursa zaten yerel yorum gösterilmiş olacak
-                    });
-                }, 1000);
-            });
+            }, 500);
         }
         
         // Sayfa yüklendiğinde ilk burç yorumunu al
