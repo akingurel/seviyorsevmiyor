@@ -194,7 +194,7 @@ document['addEventListener']('DOMContentLoaded',function(){
     
     if(_0x2c9d60 && _0x2c9d61){
         function _0x2c9d62(_0x2c9d63){
-            const _0x2c9d64={
+            const _0x2c9d64 = {
                 'today':'bugün 📅',
                 'you':'sen 👤',
                 'your':'senin 👉',
@@ -236,13 +236,38 @@ document['addEventListener']('DOMContentLoaded',function(){
                 'future':'gelecek 🔮',
                 'past':'geçmiş 📜',
                 'present':'şimdiki zaman ⏱️',
-                'plans':'planlar 📝'
+                'plans':'planlar 📝',
+                'good':'iyi 👍',
+                'bad':'kötü 👎',
+                'great':'harika 🌟',
+                'wonderful':'muhteşem 🎉',
+                'terrible':'berbat 😱',
+                'beautiful':'güzel 🌹',
+                'ugly':'çirkin 🥀',
+                'health':'sağlık 🏥',
+                'wealth':'zenginlik 💎',
+                'wisdom':'bilgelik 📚',
+                'dream':'rüya 💫',
+                'hopes':'umutlar 🌠',
+                'fears':'korkular 😨',
+                'experience':'deneyim 🧠',
+                'adventure':'macera 🚀',
+                'journey':'yolculuk 🧳'
             };
-            let _0x2c9d65=_0x2c9d63;
-            Object['keys'](_0x2c9d64)['forEach'](_0x2c9d66=>{
-                const _0x2c9d67=new RegExp(`\\b${_0x2c9d66}\\b`,'gi');
-                _0x2c9d65=_0x2c9d65['replace'](_0x2c9d67,_0x2c9d64[_0x2c9d66]);
+            
+            let _0x2c9d65 = _0x2c9d63;
+            
+            // Kelime çevirisi
+            Object['keys'](_0x2c9d64)['forEach'](_0x2c9d66 => {
+                const _0x2c9d67 = new RegExp(`\\b${_0x2c9d66}\\b`, 'gi');
+                _0x2c9d65 = _0x2c9d65['replace'](_0x2c9d67, _0x2c9d64[_0x2c9d66]);
             });
+            
+            // Cümle kalıpları için basit düzeltmeler
+            _0x2c9d65 = _0x2c9d65.replace(/sen olacak/gi, "olacaksın");
+            _0x2c9d65 = _0x2c9d65.replace(/sen olabilir/gi, "olabilirsin");
+            _0x2c9d65 = _0x2c9d65.replace(/senin gün/gi, "günün");
+            
             return _0x2c9d65;
         }
         
@@ -251,64 +276,95 @@ document['addEventListener']('DOMContentLoaded',function(){
             
             _0x2c9d6a['textContent']='Burç yorumu alınıyor... ✨';
             
-            const fetchHoroscope = (retryCount = 3) => {
-                fetch(`https://raw.githubusercontent.com/mdikcinar/burclar-api/main/burclar/gunluk/${_0x2c9d69_to_tr(_0x2c9d69)}.json`)
+            // CORS proxy kullanımı
+            const proxy = window.corsProxy || 'https://corsproxy.io/?';
+            
+            // Aztro API'sini kullanarak burç yorumu al - daha güvenilir ve CORS proxy ekle
+            fetch(`${proxy}https://aztro.sameerkumar.website/?sign=${_0x2c9d69}&day=today`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Aztro API\'den burç bilgisi alınamadı');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.description) {
+                    // İngilizce açıklamayı Türkçe'ye çevir ve emojiler ekle
+                    const translatedText = _0x2c9d62(data.description);
+                    _0x2c9d6a['textContent'] = `${translatedText} 🌟`;
+                    
+                    // Uyumlu günü ve şanslı sayıları da ekle
+                    _0x2c9d6a['textContent'] += `\n\nUyumlu olduğun gün: ${data.compatibility} 💞`;
+                    _0x2c9d6a['textContent'] += `\nŞanslı sayın: ${data.lucky_number} 🍀`;
+                    _0x2c9d6a['textContent'] += `\nRuh halin: ${data.mood} 😊`;
+                } else {
+                    throw new Error('API yanıtında burç bilgisi bulunamadı');
+                }
+            })
+            .catch(error => {
+                console.error('Birinci API hatası:', error);
+                
+                // Alternatif API'yi dene - yine proxy ile
+                fetch(`${proxy}https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${_0x2c9d69}&day=TODAY`)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('GitHub\'dan burç bilgisi alınamadı');
+                        throw new Error('İkinci API\'den burç bilgisi alınamadı');
                     }
                     return response.json();
                 })
                 .then(data => {
-                    if (data && data.yorum) {
-                        _0x2c9d6a['textContent'] = data.yorum;
+                    if (data && data.data && data.data.horoscope_data) {
+                        const translatedText = _0x2c9d62(data.data.horoscope_data);
+                        _0x2c9d6a['textContent'] = `${translatedText} 🌟`;
                     } else {
-                        _0x2c9d6a['textContent'] = 'Burç bilgisi bulunamadı 😔';
+                        throw new Error('İkinci API yanıtında burç bilgisi bulunamadı');
                     }
                 })
-                .catch(error => {
-                    console.error('Burç bilgisi alınırken hata oluştu:', error);
-                    if (retryCount > 0) {
-                        console.log(`Yeniden deneme: ${3 - retryCount + 1}`);
-                        setTimeout(() => fetchHoroscope(retryCount - 1), 2000);
-                    } else {
-                        console.log('GitHub\'dan veri alınamadı, sabit verilere geçiliyor');
-                        
-                        // Türkçe sabit veriler
-                        const _0x2c9d70 = [
-                            "Bugün yeni başlangıçlar için ideal. İçgüdülerine güven ve tüm konularda kalbini dinle. Etrafında pozitif enerji var. 🌟",
-                            "İletişim bugün öne çıkıyor. Düşüncelerini net ifade et ve başkalarını dikkatle dinle. Önemli bir mesaj gelebilir. 💬",
-                            "Bugün kişisel hedeflerine odaklan. Kararlılığın sayesinde her engelin üstesinden gelebilirsin. Başarı ulaşılabilir durumda. 🎯",
-                            "Yaratıcılığın bugün zirvede. Bu enerjiyi problemleri çözmek için kullan. Diğerleri senin yenilikçi yaklaşımını takdir edecek. ✨",
-                            "İlişkiler bugün merkez sahneyi alıyor. Bağlantılarını besle ve önemsediğin kişilere takdirini göster. ❤️",
-                            "Bugün büyüme ve öğrenme fırsatları getiriyor. Açık fikirli ol ve konfor alanının dışına çıkmaya istekli ol. 🌱",
-                            "Finansal konular bugün dikkatini gerektiriyor. Kaynaklarını gözden geçir ve geleceğin için pratik kararlar al. 💰",
-                            "Sezgilerin bugün özellikle güçlü. Karar verirken iç sesini dinle. Seni doğru yönlendirecektir. 🧠",
-                            "Bugün planlama ve organizasyon için ideal. Net hedefler belirle ve bunlara ulaşmak için bir yol haritası oluştur. 📝",
-                            "Sosyal bağlantılar bugün mutluluk getiriyor. Arkadaşlarına ulaş ve grup aktivitelerine katıl. Varlığın değer görecek. 👥",
-                            "Enerji seviyen bugün yüksek. Bu canlılığı sana önemli gelen projelere yönlendir. Fiziksel aktivite özellikle faydalı olacak. ⚡",
-                            "Bugün düşünce ve içe bakış için uygun. Kendine zaman ayır ve gerçek arzularını ve yaşam yönünü düşün. 🧘‍♀️",
-                            "Bir sürpriz yolda geliyor. Önemli bir konudaki bakış açını değiştirebilecek beklenmedik fırsatlara açık ol. 🎁",
-                            "Kişisel çekiciliğin bugün güçlü. Diğerleri senin özgüvenine ve karizmanla çekiliyor. Bu etkiyi bilgece kullan. ✨",
-                            "Çevrende güzelliğin tadını çıkarmak için zaman ayır. Doğa veya sanatla bağlantı kurmak ruhunu canlandıracak ve yaratıcılığını teşvik edecek. 🌿",
-                            "Bugün anlaşmazlıkları çözmek için uygun. Diplomatik becerilerin zorlu durumlarda ortak zemin bulmanı sağlayacak. 🤝",
-                            "Bugün kendine bakıma odaklan. Fiziksel ve duygusal ihtiyaçlarına bakmak, yaklaşan zorluklarla başa çıkmak için enerji verecek. 🛀",
-                            "Analitik yeteneklerin bugün artıyor. Karmaşık problemler, onlara mantıklı düşünceyle yaklaştığında daha netleşiyor. 🔍",
-                            "Bugün ilk izlenimlerine güven. Durumları hızlı değerlendirme yeteneğin özellikle güçlü ve seni doğru yönlendirecek. 👁️",
-                            "Geçmişteki bir bağlantı tekrar ortaya çıkabilir. Bu yeniden birleşme, iyileşme veya yolculuğunla ilgili yeni bir bakış açısı kazanma fırsatı sunuyor. 🔄"
-                        ];
-                        
-                        // Günün tarihine göre deterministik bir seçim
-                        const today = new Date();
-                        const seed = today.getDate() + (today.getMonth() + 1) * 31 + _0x2c9d69.length;
-                        const randomIndex = seed % _0x2c9d70.length;
-                        
-                        _0x2c9d6a['textContent'] = _0x2c9d70[randomIndex];
-                    }
+                .catch(secondError => {
+                    console.error('İkinci API hatası:', secondError);
+                    
+                    // Son çare: Tüm API'ler başarısız olursa, sabit veri göster ama
+                    // her gün farklı bir yorum göstermek için deterministik rastgele seçim
+                    console.log('Tüm API denemeleri başarısız, sabit verilere geçiliyor');
+                    
+                    // Günlük deterministik burç yorumları
+                    const _0x2c9d70 = [
+                        "Bugün yeni başlangıçlar için ideal. İçgüdülerine güven ve tüm konularda kalbini dinle. Etrafında pozitif enerji var. 🌟",
+                        "İletişim bugün öne çıkıyor. Düşüncelerini net ifade et ve başkalarını dikkatle dinle. Önemli bir mesaj gelebilir. 💬",
+                        "Bugün kişisel hedeflerine odaklan. Kararlılığın sayesinde her engelin üstesinden gelebilirsin. Başarı ulaşılabilir durumda. 🎯",
+                        "Yaratıcılığın bugün zirvede. Bu enerjiyi problemleri çözmek için kullan. Diğerleri senin yenilikçi yaklaşımını takdir edecek. ✨",
+                        "İlişkiler bugün merkez sahneyi alıyor. Bağlantılarını besle ve önemsediğin kişilere takdirini göster. ❤️",
+                        "Bugün büyüme ve öğrenme fırsatları getiriyor. Açık fikirli ol ve konfor alanının dışına çıkmaya istekli ol. 🌱",
+                        "Finansal konular bugün dikkatini gerektiriyor. Kaynaklarını gözden geçir ve geleceğin için pratik kararlar al. 💰",
+                        "Sezgilerin bugün özellikle güçlü. Karar verirken iç sesini dinle. Seni doğru yönlendirecektir. 🧠",
+                        "Bugün planlama ve organizasyon için ideal. Net hedefler belirle ve bunlara ulaşmak için bir yol haritası oluştur. 📝",
+                        "Sosyal bağlantılar bugün mutluluk getiriyor. Arkadaşlarına ulaş ve grup aktivitelerine katıl. Varlığın değer görecek. 👥",
+                        "Enerji seviyen bugün yüksek. Bu canlılığı sana önemli gelen projelere yönlendir. Fiziksel aktivite özellikle faydalı olacak. ⚡",
+                        "Bugün düşünce ve içe bakış için uygun. Kendine zaman ayır ve gerçek arzularını ve yaşam yönünü düşün. 🧘‍♀️",
+                        "Bir sürpriz yolda geliyor. Önemli bir konudaki bakış açını değiştirebilecek beklenmedik fırsatlara açık ol. 🎁",
+                        "Kişisel çekiciliğin bugün güçlü. Diğerleri senin özgüvenine ve karizmanla çekiliyor. Bu etkiyi bilgece kullan. ✨",
+                        "Çevrende güzelliğin tadını çıkarmak için zaman ayır. Doğa veya sanatla bağlantı kurmak ruhunu canlandıracak ve yaratıcılığını teşvik edecek. 🌿",
+                        "Bugün anlaşmazlıkları çözmek için uygun. Diplomatik becerilerin zorlu durumlarda ortak zemin bulmanı sağlayacak. 🤝",
+                        "Bugün kendine bakıma odaklan. Fiziksel ve duygusal ihtiyaçlarına bakmak, yaklaşan zorluklarla başa çıkmak için enerji verecek. 🛀",
+                        "Analitik yeteneklerin bugün artıyor. Karmaşık problemler, onlara mantıklı düşünceyle yaklaştığında daha netleşiyor. 🔍",
+                        "Bugün ilk izlenimlerine güven. Durumları hızlı değerlendirme yeteneğin özellikle güçlü ve seni doğru yönlendirecek. 👁️",
+                        "Geçmişteki bir bağlantı tekrar ortaya çıkabilir. Bu yeniden birleşme, iyileşme veya yolculuğunla ilgili yeni bir bakış açısı kazanma fırsatı sunuyor. 🔄"
+                    ];
+                    
+                    // Her burç ve gün için aynı yorumu göstermek üzere deterministik seçim
+                    const today = new Date();
+                    const dateString = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`;
+                    const seed = dateString.length + _0x2c9d69.length * 2 + today.getDate();
+                    const randomIndex = seed % _0x2c9d70.length;
+                    
+                    _0x2c9d6a['textContent'] = _0x2c9d70[randomIndex];
                 });
-            };
-            
-            fetchHoroscope();
+            });
         }
         
         // İngilizce burç adlarını Türkçe'ye çevir (API için)

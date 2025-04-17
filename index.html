@@ -697,6 +697,26 @@
             }
         }
     </style>
+    
+    <!-- GSAP animasyon kütüphanesi - güvenilir CDN ve SRI bütünlük kontrolü ekle -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" 
+            integrity="sha512-16esztaSRplJROstbIXH36eFxhexugfLfYchWKU0hp9M+2SdrHJSf+G9jflGEbkS7WGhQxCVTcRV/c44jD+1qQ==" 
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <!-- CORS Anywhere proxy script -->
+    <script>
+        // CORS Proxy tanımlaması
+        window.corsProxy = "https://cors-anywhere.herokuapp.com/";
+        
+        // Unchecked runtime.lastError hatasını önlemek için listener
+        window.addEventListener('error', function(e) {
+            if (e && e.message && e.message.indexOf('Unchecked runtime.lastError') >= 0) {
+                // Bu hatayı engelle, genellikle extension'lardan kaynaklanır
+                e.stopPropagation();
+                return true;
+            }
+        }, true);
+    </script>
 </head>
 <body>
     <!-- Arkaplan dekorasyonları -->
