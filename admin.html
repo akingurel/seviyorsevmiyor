@@ -472,6 +472,13 @@
             showSuccess('Şifre başarıyla güncellendi!');
             document.getElementById('new-password').value = '';
         };
+
+        // Sayfa kapatıldığında veya yenilendiğinde oturumu kapat
+        window.addEventListener('beforeunload', function() {
+            if (firebase && firebase.auth) {
+                firebase.auth().signOut();
+            }
+        });
     </script>
 </body>
 </html> 
