@@ -271,6 +271,9 @@ document['addEventListener']('DOMContentLoaded',function(){
             return _0x2c9d65;
         }
         
+        // Added global variable at appropriate location
+        let currentHoroscopeUnsubscribe = null;
+
         // Firestore'dan burç yorumu çekme fonksiyonu
         function getHoroscopeFromFirestore(sign, callback) {
             if (typeof firebase === 'undefined' || !firebase.firestore) {
@@ -278,26 +281,31 @@ document['addEventListener']('DOMContentLoaded',function(){
                 return;
             }
             const docRef = firebase.firestore().collection('horoscopes').doc(sign.charAt(0).toUpperCase() + sign.slice(1));
-            docRef.get().then((doc) => {
+            // Use onSnapshot to listen for real-time updates and return the unsubscribe function
+            return docRef.onSnapshot((doc) => {
                 if (doc.exists && doc.data().text) {
                     callback(doc.data().text);
                 } else {
                     callback(null);
                 }
-            }).catch(() => callback(null));
+            }, (error) => { callback(null); });
         }
         
         function _0x2c9d68(_0x2c9d69, _0x2c9d6a) {
             if (!_0x2c9d6a) return;
             _0x2c9d6a.textContent = 'Burç yorumu alınıyor... ✨';
-            // Sadece Firestore'dan çek
-            getHoroscopeFromFirestore(_0x2c9d69, function(firestoreHoroscope) {
+            // Unsubscribe previous listener if it exists
+            if (currentHoroscopeUnsubscribe) {
+                currentHoroscopeUnsubscribe();
+                currentHoroscopeUnsubscribe = null;
+            }
+            // Attach a new real-time listener and store the unsubscribe function
+            currentHoroscopeUnsubscribe = getHoroscopeFromFirestore(_0x2c9d69, function(firestoreHoroscope) {
                 if (firestoreHoroscope) {
                     _0x2c9d6a.textContent = firestoreHoroscope;
-                    return;
+                } else {
+                    _0x2c9d6a.textContent = 'Burç yorumu bulunamadı. Lütfen admin panelden ayarlayın.';
                 }
-                // Firestore'da yoksa uyarı göster
-                _0x2c9d6a.textContent = 'Burç yorumu bulunamadı. Lütfen admin panelden ayarlayın.';
             });
         }
         
