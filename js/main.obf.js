@@ -271,20 +271,43 @@ document['addEventListener']('DOMContentLoaded',function(){
             return _0x2c9d65;
         }
         
+        // Firestore'dan burç yorumu çekme fonksiyonu
+        function getHoroscopeFromFirestore(sign, callback) {
+            if (typeof firebase === 'undefined' || !firebase.firestore) {
+                callback(null);
+                return;
+            }
+            const docRef = firebase.firestore().collection('horoscopes').doc(sign.charAt(0).toUpperCase() + sign.slice(1));
+            docRef.get().then((doc) => {
+                if (doc.exists && doc.data().text) {
+                    callback(doc.data().text);
+                } else {
+                    callback(null);
+                }
+            }).catch(() => callback(null));
+        }
+        
         function _0x2c9d68(_0x2c9d69, _0x2c9d6a) {
             if (!_0x2c9d6a) return;
             _0x2c9d6a.textContent = 'Burç yorumu alınıyor... ✨';
-            // Admin panelden gelen burç mesajlarını kullan
-            let horoscopes = {};
-            try {
-                horoscopes = JSON.parse(localStorage.getItem('admin_horoscopes') || '{}');
-            } catch(e) { horoscopes = {}; }
-            if (horoscopes && horoscopes[_0x2c9d69.charAt(0).toUpperCase() + _0x2c9d69.slice(1)]) {
-                _0x2c9d6a.textContent = horoscopes[_0x2c9d69.charAt(0).toUpperCase() + _0x2c9d69.slice(1)];
-                return;
-            }
-            // Eğer admin panelden veri yoksa uyarı göster
-            _0x2c9d6a.textContent = 'Burç yorumu bulunamadı. Lütfen admin panelden ayarlayın.';
+            // Önce Firestore'dan çek
+            getHoroscopeFromFirestore(_0x2c9d69, function(firestoreHoroscope) {
+                if (firestoreHoroscope) {
+                    _0x2c9d6a.textContent = firestoreHoroscope;
+                    return;
+                }
+                // Firestore'da yoksa localStorage'a bak
+                let horoscopes = {};
+                try {
+                    horoscopes = JSON.parse(localStorage.getItem('admin_horoscopes') || '{}');
+                } catch(e) { horoscopes = {}; }
+                if (horoscopes && horoscopes[_0x2c9d69.charAt(0).toUpperCase() + _0x2c9d69.slice(1)]) {
+                    _0x2c9d6a.textContent = horoscopes[_0x2c9d69.charAt(0).toUpperCase() + _0x2c9d69.slice(1)];
+                    return;
+                }
+                // Hiçbiri yoksa uyarı göster
+                _0x2c9d6a.textContent = 'Burç yorumu bulunamadı. Lütfen admin panelden ayarlayın.';
+            });
         }
         
         // İngilizce burç adlarını Türkçe'ye çevir (API için)
