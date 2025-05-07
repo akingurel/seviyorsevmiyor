@@ -275,15 +275,19 @@
     </style>
 </head>
 <body>
-    <div class="login-overlay" id="login-overlay">
-        <form class="login-box" id="admin-login-form">
+    <!-- Added Admin Login Overlay -->
+    <div id="admin-login-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index:1000;">
+        <div style="background:#fff; padding:20px; border-radius:8px; width:300px;">
             <h2>Admin Girişi</h2>
-            <input type="text" id="admin-username" placeholder="Kullanıcı Adı" required>
-            <input type="password" id="admin-password" placeholder="Şifre" required>
-            <div class="login-error" id="admin-error"></div>
-            <button type="submit">Giriş Yap</button>
-        </form>
+            <form id="admin-login-form">
+                <input type="text" id="admin-username" placeholder="Kullanıcı Adı" style="width:100%; padding:8px; margin-bottom:10px;" required>
+                <input type="password" id="admin-password" placeholder="Şifre" style="width:100%; padding:8px; margin-bottom:10px;" required>
+                <button type="submit" style="width:100%; padding:10px; background:#e91e63; color:#fff; border:none; border-radius:4px;">Giriş Yap</button>
+                <div id="login-error" style="color: red; margin-top:10px; display:none;"></div>
+            </form>
+        </div>
     </div>
+    <!-- End of Admin Login Overlay -->
     <div class="admin-root" id="admin-root" style="display:none;">
         <aside class="sidebar">
             <div class="logo">💼 Panel</div>
@@ -404,49 +408,48 @@
         }
         // Girişte paneli yükle
         const loginForm = document.getElementById('admin-login-form');
-        const errorDiv = document.getElementById('admin-error');
-        const loginOverlay = document.getElementById('login-overlay');
+        const errorDiv = document.getElementById('login-error');
+        const loginOverlay = document.getElementById('admin-login-overlay');
         const adminRoot = document.getElementById('admin-root');
-
-        // Firestore'dan kullanıcı adı ve şifreyi çek
-        async function getAdminCredentials() {
-            const docRef = doc(db, "settings", "adminPassword");
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                return docSnap.data();
-            } else {
-                // Varsayılan oluştur
-                await setDoc(docRef, { username: "admin", password: "sifre123" });
-                return { username: "admin", password: "sifre123" };
-            }
-        }
 
         // Giriş formu submit
         loginForm.onsubmit = async function(e) {
             e.preventDefault();
             const username = document.getElementById('admin-username').value;
             const password = document.getElementById('admin-password').value;
-            const creds = await getAdminCredentials();
-            if (username === creds.username && password === creds.password) {
-                // Oturumu başlat
-                sessionStorage.setItem('admin_logged_in', '1');
-                loginOverlay.style.display = 'none';
-                adminRoot.style.display = 'flex';
-                errorDiv.style.display = 'none';
-                loadPanel();
-            } else {
-                errorDiv.textContent = 'Kullanıcı adı veya şifre yanlış!';
-                errorDiv.style.display = 'block';
-            }
-        };
-
-        // Sayfa açıldığında oturum kontrolü
-        if (sessionStorage.getItem('admin_logged_in') === '1') {
-            loginOverlay.style.display = 'none';
-            adminRoot.style.display = 'flex';
             errorDiv.style.display = 'none';
-            loadPanel();
-        }
+
+            if (typeof firebase === 'undefined' || !firebase.firestore) {
+                errorDiv.textContent = 'Firebase yapılandırması eksik.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Fetch the admin credentials from Firestore's 'settings' document
+            firebase.firestore().collection('settings').doc('settings').get().then(function(doc) {
+                if (doc.exists) {
+                    var data = doc.data();
+                    var storedUser = data.adminUser;
+                    var storedPassword = data.adminPassword;
+                    if (username === storedUser && password === storedPassword) {
+                        // Successful login, hide the login overlay
+                        loginOverlay.style.display = 'none';
+                        adminRoot.style.display = 'flex';
+                        errorDiv.style.display = 'none';
+                        loadPanel();
+                    } else {
+                        errorDiv.textContent = 'Kullanıcı adı veya şifre yanlış.';
+                        errorDiv.style.display = 'block';
+                    }
+                } else {
+                    errorDiv.textContent = 'Ayarlar bulunamadı. Lütfen admin panel ayarlarını kontrol edin.';
+                    errorDiv.style.display = 'block';
+                }
+            }).catch(function(err) {
+                errorDiv.textContent = 'Bir hata oluştu: ' + err.message;
+                errorDiv.style.display = 'block';
+            });
+        };
 
         // Çıkış butonu
         const logoutBtn = document.getElementById('logout-btn');
