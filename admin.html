@@ -455,6 +455,15 @@
             showSuccess('İçerik kaydedildi!');
             await loadContent();
         };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Burada tüm eski kodlar (butonlara erişenler dahil) olacak
+            // Örnek:
+            // const saveContentBtn = document.getElementById('save-content');
+            // saveContentBtn.onclick = ...
+            // ...
+            // Kodun geri kalanı ...
+        });
     </script>
 </body>
 </html> 
