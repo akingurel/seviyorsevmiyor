@@ -412,6 +412,19 @@
         const loginOverlay = document.getElementById('admin-login-overlay');
         const adminRoot = document.getElementById('admin-root');
 
+        // Firestore'dan admin kullanıcı adı ve şifresini oku
+        async function getAdminCredentials() {
+            const docRef = doc(db, "settings", "settings");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                return docSnap.data();
+            } else {
+                // Varsayılan oluştur
+                await setDoc(docRef, { adminUser: "admin", adminPassword: "sifre123" });
+                return { adminUser: "admin", adminPassword: "sifre123" };
+            }
+        }
+
         // Giriş formu submit
         loginForm.onsubmit = async function(e) {
             e.preventDefault();
@@ -419,36 +432,17 @@
             const password = document.getElementById('admin-password').value;
             errorDiv.style.display = 'none';
 
-            if (typeof firebase === 'undefined' || !firebase.firestore) {
-                errorDiv.textContent = 'Firebase yapılandırması eksik.';
+            // Firestore'dan adminUser ve adminPassword'u çek
+            const creds = await getAdminCredentials();
+            if (username === creds.adminUser && password === creds.adminPassword) {
+                loginOverlay.style.display = 'none';
+                adminRoot.style.display = 'flex';
+                errorDiv.style.display = 'none';
+                loadPanel();
+            } else {
+                errorDiv.textContent = 'Kullanıcı adı veya şifre yanlış.';
                 errorDiv.style.display = 'block';
-                return;
             }
-            
-            // Fetch the admin credentials from Firestore's 'settings' document
-            firebase.firestore().collection('settings').doc('settings').get().then(function(doc) {
-                if (doc.exists) {
-                    var data = doc.data();
-                    var storedUser = data.adminUser;
-                    var storedPassword = data.adminPassword;
-                    if (username === storedUser && password === storedPassword) {
-                        // Successful login, hide the login overlay
-                        loginOverlay.style.display = 'none';
-                        adminRoot.style.display = 'flex';
-                        errorDiv.style.display = 'none';
-                        loadPanel();
-                    } else {
-                        errorDiv.textContent = 'Kullanıcı adı veya şifre yanlış.';
-                        errorDiv.style.display = 'block';
-                    }
-                } else {
-                    errorDiv.textContent = 'Ayarlar bulunamadı. Lütfen admin panel ayarlarını kontrol edin.';
-                    errorDiv.style.display = 'block';
-                }
-            }).catch(function(err) {
-                errorDiv.textContent = 'Bir hata oluştu: ' + err.message;
-                errorDiv.style.display = 'block';
-            });
         };
 
         // Çıkış butonu
@@ -459,17 +453,6 @@
             loginOverlay.style.display = 'flex';
         };
 
-        // Firestore'dan admin şifresini oku (şifre değiştirme için)
-        async function getPasswordFromDB() {
-            const docRef = doc(db, "settings", "adminPassword");
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                return docSnap.data().password;
-            } else {
-                await setDoc(docRef, { username: "admin", password: "sifre123" });
-                return "sifre123";
-            }
-        }
         // Şifre değiştirme
         const changeBtn = document.getElementById('change-password-btn');
         changeBtn.onclick = async function() {
@@ -480,7 +463,7 @@
             }
             // Kullanıcı adını da koru
             const creds = await getAdminCredentials();
-            await setDoc(doc(db, "settings", "adminPassword"), { username: creds.username, password: newPw });
+            await setDoc(doc(db, "settings", "settings"), { adminUser: creds.adminUser, adminPassword: newPw });
             showSuccess('Şifre başarıyla güncellendi!');
             document.getElementById('new-password').value = '';
         };
