@@ -806,26 +806,6 @@
             <h3>Papatya Falı</h3>
             <p>Papatya, saflığın ve masumiyetin sembolüdür. Falına bakıldığında, evrene gönderdiğiniz enerji, size doğru cevabı getirecektir.</p>
         </div>
-        <!-- Günlük Burç Yorumu kartını tamamen kaldır ve yenisini ekle -->
-        <div class="info-card horoscope-card" style="max-width:400px; margin:2rem auto;">
-            <div class="icon">✨</div>
-            <h3>Günlük Burç Yorumu</h3>
-            <select id="zodiac-select" style="width:100%;margin-bottom:8px;padding:5px;border-radius:8px;border:1px solid #e91e63;background:rgba(255,255,255,0.7);">
-                <option value="Koç">Koç</option>
-                <option value="Boğa">Boğa</option>
-                <option value="İkizler">İkizler</option>
-                <option value="Yengeç">Yengeç</option>
-                <option value="Aslan">Aslan</option>
-                <option value="Başak">Başak</option>
-                <option value="Terazi">Terazi</option>
-                <option value="Akrep">Akrep</option>
-                <option value="Yay">Yay</option>
-                <option value="Oğlak">Oğlak</option>
-                <option value="Kova">Kova</option>
-                <option value="Balık">Balık</option>
-            </select>
-            <div id="horoscope-text" style="font-size:1em; color:#555;min-height:100px;">Burcunuzu seçin...</div>
-        </div>
     </div>
     
     <!-- Aşk göstergesi -->
@@ -844,42 +824,5 @@
     <a href="admin.html" class="admin-fab" title="Admin Panel">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e91e63"/><path d="M12 8v4l3 2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
-    
-    <!-- Firestore'dan burç yorumu çekmek için modern kodu güncelle -->
-    <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyB9KPNxL2x4zS9IK6IyKvH95JpVDJSY5ds",
-        authDomain: "seviyorsevmiyor-67853.firebaseapp.com",
-        projectId: "seviyorsevmiyor-67853",
-        storageBucket: "seviyorsevmiyor-67853.appspot.com",
-        messagingSenderId: "970018456190",
-        appId: "1:970018456190:web:cfbf2a9156c0b0d764ce2f",
-        measurementId: "G-XQ676YZXNP"
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const select = document.getElementById('zodiac-select');
-    const textDiv = document.getElementById('horoscope-text');
-
-    async function loadHoroscope(sign) {
-        textDiv.textContent = 'Burç yorumu alınıyor...';
-        const docRef = doc(db, 'horoscopes', sign);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists() && docSnap.data().text) {
-            textDiv.textContent = docSnap.data().text;
-        } else {
-            textDiv.textContent = 'Burç yorumu bulunamadı. Lütfen admin panelden ayarlayın.';
-        }
-    }
-
-    if (select && textDiv) {
-        loadHoroscope(select.value);
-        select.addEventListener('change', () => loadHoroscope(select.value));
-    }
-    </script>
 </body>
 </html>

@@ -292,17 +292,20 @@
         <aside class="sidebar">
             <div class="logo">💼 Panel</div>
             <nav>
-                <a href="#" class="active">Burçlar</a>
                 <a href="#">İstatistikler</a>
             </nav>
         </aside>
         <div class="main-panel">
             <div class="topbar">Seviyor Sevmiyor Admin Paneli</div>
             <div class="content">
-                <div class="card" id="card-horoscopes">
-                    <h3>Günlük Burç Mesajları</h3>
-                    <ul id="horoscope-list"></ul>
-                    <button id="save-horoscopes">Kaydet</button>
+                <div class="card" id="card-content">
+                    <h3>Site İçeriği Düzenle</h3>
+                    <ul>
+                        <li><b>Başlık:</b> <input type="text" id="site-title" /></li>
+                        <li><b>Açıklama:</b> <input type="text" id="site-desc" /></li>
+                        <li><b>Görsel URL:</b> <input type="text" id="site-img" /></li>
+                    </ul>
+                    <button id="save-content">Kaydet</button>
                 </div>
                 <div class="card" id="card-stats">
                     <h3>Oyun İstatistikleri</h3>
@@ -339,40 +342,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Burç listesini çek ve inputlara doldur
-        async function loadHoroscopes() {
-            const list = document.getElementById('horoscope-list');
-            list.innerHTML = '';
-            const burclar = [
-                'Koç','Boğa','İkizler','Yengeç','Aslan','Başak','Terazi','Akrep','Yay','Oğlak','Kova','Balık'
-            ];
-            // Firestore'dan çek
-            const horoscopes = {};
-            const querySnapshot = await getDocs(collection(db, "horoscopes"));
-            querySnapshot.forEach((docu) => {
-                horoscopes[docu.id] = docu.data().text;
-            });
-            burclar.forEach(sign => {
-                const val = horoscopes[sign] || '';
-                const li = document.createElement('li');
-                li.innerHTML = `<b>${sign}:</b> <input type='text' value="${val.replace(/"/g, '&quot;')}" data-sign="${sign}" style='width:70%;' />`;
-                list.appendChild(li);
-            });
-        }
-
-        // Kaydet butonu
-        const saveBtn = document.getElementById('save-horoscopes');
-        saveBtn.onclick = async function() {
-            const inputs = document.querySelectorAll('#horoscope-list input');
-            for (const input of inputs) {
-                const sign = input.getAttribute('data-sign');
-                const text = input.value;
-                await setDoc(doc(db, "horoscopes", sign), { text });
-            }
-            showSuccess('Burç mesajları Firestore ile kaydedildi!');
-            await loadHoroscopes();
-        };
-
         // İstatistikler (localStorage ile)
         const defaultStats = { games: 123, zodiac: 'Koç', result: 'Seviyor' };
         function getStats() {
@@ -403,7 +372,7 @@
         }
         // Panel açıldığında yükle
         function loadPanel() {
-            loadHoroscopes();
+            loadContent();
             loadStats();
         }
         // Girişte paneli yükle
@@ -472,6 +441,27 @@
             await setDoc(doc(db, "settings", "settings"), { adminUser: creds.adminUser, adminPassword: newPw });
             showSuccess('Şifre başarıyla güncellendi!');
             document.getElementById('new-password').value = '';
+        };
+
+        // 2.1. İçerik yükleme ve kaydetme kodu
+        async function loadContent() {
+            const docRef = doc(db, "settings", "content");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('site-title').value = data.title || '';
+                document.getElementById('site-desc').value = data.desc || '';
+                document.getElementById('site-img').value = data.img || '';
+            }
+        }
+        document.getElementById('save-content').onclick = async function() {
+            await setDoc(doc(db, "settings", "content"), {
+                title: document.getElementById('site-title').value,
+                desc: document.getElementById('site-desc').value,
+                img: document.getElementById('site-img').value
+            });
+            showSuccess('İçerik kaydedildi!');
+            await loadContent();
         };
     </script>
 </body>
