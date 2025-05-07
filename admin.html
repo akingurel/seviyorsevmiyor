@@ -347,10 +347,10 @@
                 'Koç','Boğa','İkizler','Yengeç','Aslan','Başak','Terazi','Akrep','Yay','Oğlak','Kova','Balık'
             ];
             // Firestore'dan çek
-            const querySnapshot = await getDocs(collection(db, "horoscopes"));
             const horoscopes = {};
-            querySnapshot.forEach((doc) => {
-                horoscopes[doc.id] = doc.data().text;
+            const querySnapshot = await getDocs(collection(db, "horoscopes"));
+            querySnapshot.forEach((docu) => {
+                horoscopes[docu.id] = docu.data().text;
             });
             burclar.forEach(sign => {
                 const val = horoscopes[sign] || '';
