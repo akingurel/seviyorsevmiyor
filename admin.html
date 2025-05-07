@@ -320,13 +320,13 @@
     </div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB9KPNxL2x4zS9IK6IyKvH95JpVDJSY5ds",
             authDomain: "seviyorsevmiyor-67853.firebaseapp.com",
             projectId: "seviyorsevmiyor-67853",
-            storageBucket: "seviyorsevmiyor-67853.firebasestorage.app",
+            storageBucket: "seviyorsevmiyor-67853.appspot.com",
             messagingSenderId: "970018456190",
             appId: "1:970018456190:web:cfbf2a9156c0b0d764ce2f",
             measurementId: "G-XQ676YZXNP"
@@ -334,136 +334,105 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // İstatistikler (localStorage ile)
-        const defaultStats = { games: 123, zodiac: 'Koç', result: 'Seviyor' };
-        function getStats() {
-            return JSON.parse(localStorage.getItem('admin_stats') || 'null') || {...defaultStats};
-        }
-        function setStats(obj) {
-            localStorage.setItem('admin_stats', JSON.stringify(obj));
-        }
-        function loadStats() {
-            const stats = getStats();
-            document.getElementById('stat-games').value = stats.games;
-            document.getElementById('stat-zodiac').value = stats.zodiac;
-            document.getElementById('stat-result').value = stats.result;
-        }
-        document.getElementById('save-stats').onclick = function() {
-            setStats({
-                games: parseInt(document.getElementById('stat-games').value) || 0,
-                zodiac: document.getElementById('stat-zodiac').value,
-                result: document.getElementById('stat-result').value
-            });
-            showSuccess('İstatistikler kaydedildi!');
-        };
-        function showSuccess(msg) {
-            const div = document.getElementById('admin-success');
-            div.textContent = msg;
-            div.style.display = 'block';
-            setTimeout(() => { div.style.display = 'none'; }, 2000);
-        }
-        // Panel açıldığında yükle
-        function loadPanel() {
-            loadContent();
-            loadStats();
-        }
-        // Girişte paneli yükle
-        const loginForm = document.getElementById('admin-login-form');
-        const errorDiv = document.getElementById('login-error');
-        const loginOverlay = document.getElementById('admin-login-overlay');
-        const adminRoot = document.getElementById('admin-root');
-        const logoutBtn = document.getElementById('logout-btn');
-        const changeBtn = document.getElementById('change-password-btn');
-        const saveContentBtn = document.getElementById('save-content');
-
-        // Firestore'dan admin kullanıcı adı ve şifresini oku
-        async function getAdminCredentials() {
-            const docRef = doc(db, "settings", "settings");
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                return docSnap.data();
-            } else {
-                // Varsayılan oluştur
-                await setDoc(docRef, { adminUser: "admin", adminPassword: "sifre123" });
-                return { adminUser: "admin", adminPassword: "sifre123" };
-            }
-        }
-
-        // Giriş formu submit
-        loginForm.onsubmit = async function(e) {
-            e.preventDefault();
-            const username = document.getElementById('admin-username').value;
-            const password = document.getElementById('admin-password').value;
-            errorDiv.style.display = 'none';
-
-            if (!db) {
-                errorDiv.textContent = 'Firebase yapılandırması eksik.';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            // Firestore'dan adminUser ve adminPassword'u çek
-            const creds = await getAdminCredentials();
-            if (username === creds.adminUser && password === creds.adminPassword) {
-                loginOverlay.style.display = 'none';
-                adminRoot.style.display = 'flex';
-                errorDiv.style.display = 'none';
-                loadPanel();
-            } else {
-                errorDiv.textContent = 'Kullanıcı adı veya şifre yanlış.';
-                errorDiv.style.display = 'block';
-            }
-        };
-
-        // Çıkış butonu
-        logoutBtn.onclick = function() {
-            sessionStorage.removeItem('admin_logged_in');
-            adminRoot.style.display = 'none';
-            loginOverlay.style.display = 'flex';
-        };
-
-        // Şifre değiştirme
-        changeBtn.onclick = async function() {
-            const newPw = document.getElementById('new-password').value;
-            if (newPw.length < 4) {
-                showSuccess('Şifre en az 4 karakter olmalı!');
-                return;
-            }
-            // Kullanıcı adını da koru
-            const creds = await getAdminCredentials();
-            await setDoc(doc(db, "settings", "settings"), { adminUser: creds.adminUser, adminPassword: newPw });
-            showSuccess('Şifre başarıyla güncellendi!');
-            document.getElementById('new-password').value = '';
-        };
-
-        // İçerik yükleme ve kaydetme kodu
-        async function loadContent() {
-            const docRef = doc(db, "settings", "content");
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                document.getElementById('site-title').value = data.title || '';
-                document.getElementById('site-desc').value = data.desc || '';
-                document.getElementById('site-img').value = data.img || '';
-            }
-        }
-        saveContentBtn.onclick = async function() {
-            await setDoc(doc(db, "settings", "content"), {
-                title: document.getElementById('site-title').value,
-                desc: document.getElementById('site-desc').value,
-                img: document.getElementById('site-img').value
-            });
-            showSuccess('İçerik kaydedildi!');
-            await loadContent();
-        };
-
         document.addEventListener('DOMContentLoaded', function() {
-            // Burada tüm eski kodlar (butonlara erişenler dahil) olacak
-            // Örnek:
-            // const saveContentBtn = document.getElementById('save-content');
-            // saveContentBtn.onclick = ...
-            // ...
-            // Kodun geri kalanı ...
+            const loginForm = document.getElementById('admin-login-form');
+            const errorDiv = document.getElementById('login-error');
+            const loginOverlay = document.getElementById('admin-login-overlay');
+            const adminRoot = document.getElementById('admin-root');
+            const logoutBtn = document.getElementById('logout-btn');
+            const changeBtn = document.getElementById('change-password-btn');
+            const saveContentBtn = document.getElementById('save-content');
+
+            async function getAdminCredentials() {
+                const docRef = doc(db, "settings", "settings");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    return docSnap.data();
+                } else {
+                    await setDoc(docRef, { adminUser: "admin", adminPassword: "sifre123" });
+                    return { adminUser: "admin", adminPassword: "sifre123" };
+                }
+            }
+
+            loginForm.onsubmit = async function(e) {
+                e.preventDefault();
+                const username = document.getElementById('admin-username').value;
+                const password = document.getElementById('admin-password').value;
+                errorDiv.style.display = 'none';
+
+                if (!db) {
+                    errorDiv.textContent = 'Firebase yapılandırması eksik.';
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+                try {
+                    const creds = await getAdminCredentials();
+                    if (username === creds.adminUser && password === creds.adminPassword) {
+                        loginOverlay.style.display = 'none';
+                        adminRoot.style.display = 'flex';
+                        errorDiv.style.display = 'none';
+                        loadPanel();
+                    } else {
+                        errorDiv.textContent = 'Kullanıcı adı veya şifre yanlış.';
+                        errorDiv.style.display = 'block';
+                    }
+                } catch (err) {
+                    errorDiv.textContent = 'Giriş sırasında hata: ' + (err.message || err);
+                    errorDiv.style.display = 'block';
+                }
+            };
+
+            logoutBtn.onclick = function() {
+                adminRoot.style.display = 'none';
+                loginOverlay.style.display = 'flex';
+            };
+
+            changeBtn.onclick = async function() {
+                const newPw = document.getElementById('new-password').value;
+                if (newPw.length < 4) {
+                    showSuccess('Şifre en az 4 karakter olmalı!');
+                    return;
+                }
+                try {
+                    const creds = await getAdminCredentials();
+                    await setDoc(doc(db, "settings", "settings"), { adminUser: creds.adminUser, adminPassword: newPw });
+                    showSuccess('Şifre başarıyla güncellendi!');
+                    document.getElementById('new-password').value = '';
+                } catch (err) {
+                    showSuccess('Şifre güncellenemedi: ' + (err.message || err));
+                }
+            };
+
+            async function loadContent() {
+                const docRef = doc(db, "settings", "content");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('site-title').value = data.title || '';
+                    document.getElementById('site-desc').value = data.desc || '';
+                    document.getElementById('site-img').value = data.img || '';
+                }
+            }
+            saveContentBtn.onclick = async function() {
+                await setDoc(doc(db, "settings", "content"), {
+                    title: document.getElementById('site-title').value,
+                    desc: document.getElementById('site-desc').value,
+                    img: document.getElementById('site-img').value
+                });
+                showSuccess('İçerik kaydedildi!');
+                await loadContent();
+            };
+
+            function loadPanel() {
+                loadContent();
+            }
+
+            function showSuccess(msg) {
+                const div = document.getElementById('admin-success');
+                div.textContent = msg;
+                div.style.display = 'block';
+                setTimeout(() => { div.style.display = 'none'; }, 2000);
+            }
         });
     </script>
 </body>
