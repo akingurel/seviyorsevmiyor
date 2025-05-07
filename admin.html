@@ -212,7 +212,7 @@
             font-weight: 700;
             margin-bottom: 1.5rem;
         }
-        .login-box input[type="password"] {
+        .login-box input[type="text"], .login-box input[type="password"] {
             width: 100%;
             padding: 0.7rem;
             border-radius: 8px;
@@ -278,8 +278,10 @@
     <div class="login-overlay" id="login-overlay">
         <form class="login-box" id="admin-login-form">
             <h2>Admin Girişi</h2>
+            <input type="text" id="admin-username" placeholder="Kullanıcı Adı" required>
+            <input type="password" id="admin-password" placeholder="Şifre" required>
             <div class="login-error" id="admin-error"></div>
-            <button type="button" id="google-login-btn" style="background:#fff;color:#e91e63;border:1px solid #e91e63;margin-top:10px;">Google ile Giriş Yap</button>
+            <button type="submit">Giriş Yap</button>
         </form>
     </div>
     <div class="admin-root" id="admin-root" style="display:none;">
@@ -320,7 +322,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB9KPNxL2x4zS9IK6IyKvH95JpVDJSY5ds",
@@ -333,8 +334,6 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
 
         // Burç listesini çek ve inputlara doldur
         async function loadHoroscopes() {
@@ -409,57 +408,65 @@
         const loginOverlay = document.getElementById('login-overlay');
         const adminRoot = document.getElementById('admin-root');
 
-        // Google ile giriş
-        const googleBtn = document.getElementById('google-login-btn');
-        googleBtn.onclick = async function() {
-            try {
-                await signInWithPopup(auth, provider);
-                // Giriş başarılı, paneli aç
+        // Firestore'dan kullanıcı adı ve şifreyi çek
+        async function getAdminCredentials() {
+            const docRef = doc(db, "settings", "adminPassword");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                return docSnap.data();
+            } else {
+                // Varsayılan oluştur
+                await setDoc(docRef, { username: "admin", password: "sifre123" });
+                return { username: "admin", password: "sifre123" };
+            }
+        }
+
+        // Giriş formu submit
+        loginForm.onsubmit = async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            const creds = await getAdminCredentials();
+            if (username === creds.username && password === creds.password) {
+                // Oturumu başlat
+                sessionStorage.setItem('admin_logged_in', '1');
                 loginOverlay.style.display = 'none';
                 adminRoot.style.display = 'flex';
                 errorDiv.style.display = 'none';
                 loadPanel();
-            } catch (e) {
-                errorDiv.textContent = 'Google ile giriş başarısız!';
+            } else {
+                errorDiv.textContent = 'Kullanıcı adı veya şifre yanlış!';
                 errorDiv.style.display = 'block';
             }
         };
 
-        // Oturum kontrolü: Giriş yapılmadan panel açılmasın
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                loginOverlay.style.display = 'none';
-                adminRoot.style.display = 'flex';
-                errorDiv.style.display = 'none';
-                loadPanel();
-            } else {
-                adminRoot.style.display = 'none';
-                loginOverlay.style.display = 'flex';
-            }
-        });
+        // Sayfa açıldığında oturum kontrolü
+        if (sessionStorage.getItem('admin_logged_in') === '1') {
+            loginOverlay.style.display = 'none';
+            adminRoot.style.display = 'flex';
+            errorDiv.style.display = 'none';
+            loadPanel();
+        }
 
         // Çıkış butonu
         const logoutBtn = document.getElementById('logout-btn');
-        logoutBtn.addEventListener('click', async function() {
-            await signOut(auth);
+        logoutBtn.onclick = function() {
+            sessionStorage.removeItem('admin_logged_in');
             adminRoot.style.display = 'none';
             loginOverlay.style.display = 'flex';
-            document.getElementById('admin-password').value = '';
-        });
+        };
 
-        // Firestore'dan admin şifresini oku
+        // Firestore'dan admin şifresini oku (şifre değiştirme için)
         async function getPasswordFromDB() {
             const docRef = doc(db, "settings", "adminPassword");
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
-                return docSnap.data().value;
+                return docSnap.data().password;
             } else {
-                // Eğer yoksa varsayılan şifreyi oluştur
-                await setDoc(docRef, { value: "sifre123" });
+                await setDoc(docRef, { username: "admin", password: "sifre123" });
                 return "sifre123";
             }
         }
-
         // Şifre değiştirme
         const changeBtn = document.getElementById('change-password-btn');
         changeBtn.onclick = async function() {
@@ -468,17 +475,12 @@
                 showSuccess('Şifre en az 4 karakter olmalı!');
                 return;
             }
-            await setDoc(doc(db, "settings", "adminPassword"), { value: newPw });
+            // Kullanıcı adını da koru
+            const creds = await getAdminCredentials();
+            await setDoc(doc(db, "settings", "adminPassword"), { username: creds.username, password: newPw });
             showSuccess('Şifre başarıyla güncellendi!');
             document.getElementById('new-password').value = '';
         };
-
-        // Sayfa kapatıldığında veya yenilendiğinde oturumu kapat
-        window.addEventListener('beforeunload', function() {
-            if (firebase && firebase.auth) {
-                firebase.auth().signOut();
-            }
-        });
     </script>
 </body>
 </html> 

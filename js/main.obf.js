@@ -290,22 +290,13 @@ document['addEventListener']('DOMContentLoaded',function(){
         function _0x2c9d68(_0x2c9d69, _0x2c9d6a) {
             if (!_0x2c9d6a) return;
             _0x2c9d6a.textContent = 'Burç yorumu alınıyor... ✨';
-            // Önce Firestore'dan çek
+            // Sadece Firestore'dan çek
             getHoroscopeFromFirestore(_0x2c9d69, function(firestoreHoroscope) {
                 if (firestoreHoroscope) {
                     _0x2c9d6a.textContent = firestoreHoroscope;
                     return;
                 }
-                // Firestore'da yoksa localStorage'a bak
-                let horoscopes = {};
-                try {
-                    horoscopes = JSON.parse(localStorage.getItem('admin_horoscopes') || '{}');
-                } catch(e) { horoscopes = {}; }
-                if (horoscopes && horoscopes[_0x2c9d69.charAt(0).toUpperCase() + _0x2c9d69.slice(1)]) {
-                    _0x2c9d6a.textContent = horoscopes[_0x2c9d69.charAt(0).toUpperCase() + _0x2c9d69.slice(1)];
-                    return;
-                }
-                // Hiçbiri yoksa uyarı göster
+                // Firestore'da yoksa uyarı göster
                 _0x2c9d6a.textContent = 'Burç yorumu bulunamadı. Lütfen admin panelden ayarlayın.';
             });
         }
