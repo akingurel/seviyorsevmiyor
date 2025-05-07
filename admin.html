@@ -372,6 +372,9 @@
         const errorDiv = document.getElementById('login-error');
         const loginOverlay = document.getElementById('admin-login-overlay');
         const adminRoot = document.getElementById('admin-root');
+        const logoutBtn = document.getElementById('logout-btn');
+        const changeBtn = document.getElementById('change-password-btn');
+        const saveContentBtn = document.getElementById('save-content');
 
         // Firestore'dan admin kullanıcı adı ve şifresini oku
         async function getAdminCredentials() {
@@ -413,7 +416,6 @@
         };
 
         // Çıkış butonu
-        const logoutBtn = document.getElementById('logout-btn');
         logoutBtn.onclick = function() {
             sessionStorage.removeItem('admin_logged_in');
             adminRoot.style.display = 'none';
@@ -421,7 +423,6 @@
         };
 
         // Şifre değiştirme
-        const changeBtn = document.getElementById('change-password-btn');
         changeBtn.onclick = async function() {
             const newPw = document.getElementById('new-password').value;
             if (newPw.length < 4) {
@@ -435,7 +436,7 @@
             document.getElementById('new-password').value = '';
         };
 
-        // 2.1. İçerik yükleme ve kaydetme kodu
+        // İçerik yükleme ve kaydetme kodu
         async function loadContent() {
             const docRef = doc(db, "settings", "content");
             const docSnap = await getDoc(docRef);
@@ -446,7 +447,7 @@
                 document.getElementById('site-img').value = data.img || '';
             }
         }
-        document.getElementById('save-content').onclick = async function() {
+        saveContentBtn.onclick = async function() {
             await setDoc(doc(db, "settings", "content"), {
                 title: document.getElementById('site-title').value,
                 desc: document.getElementById('site-desc').value,
