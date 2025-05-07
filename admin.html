@@ -432,6 +432,12 @@
             const password = document.getElementById('admin-password').value;
             errorDiv.style.display = 'none';
 
+            if (!db) {
+                errorDiv.textContent = 'Firebase yapılandırması eksik.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
             // Firestore'dan adminUser ve adminPassword'u çek
             const creds = await getAdminCredentials();
             if (username === creds.adminUser && password === creds.adminPassword) {
