@@ -824,5 +824,33 @@
     <a href="admin.html" class="admin-fab" title="Admin Panel">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#e91e63"/><path d="M12 8v4l3 2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
+    
+    <!-- Ziyaretçi girişini Firestore'a loglamak için kod ekle -->
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyB9KPNxL2x4zS9IK6IyKvH95JpVDJSY5ds",
+        authDomain: "seviyorsevmiyor-67853.firebaseapp.com",
+        projectId: "seviyorsevmiyor-67853",
+        storageBucket: "seviyorsevmiyor-67853.appspot.com",
+        messagingSenderId: "970018456190",
+        appId: "1:970018456190:web:cfbf2a9156c0b0d764ce2f",
+        measurementId: "G-XQ676YZXNP"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    fetch('https://api.ipify.org?format=json').then(res => res.json()).then(async data => {
+        const ip = data.ip;
+        const now = new Date();
+        await addDoc(collection(db, "logs"), {
+            ip,
+            time: now.toISOString(),
+            // oyunSayisi: oyun sayısı burada eklenebilir (isteğe bağlı)
+        });
+    });
+    </script>
 </body>
 </html>
