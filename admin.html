@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Seviyor Sevmiyor</title>
+    <style>
+        :root {
+            --primary: #e91e63;
+            --primary-dark: #ad1457;
+            --accent: #ff6090;
+            --bg: #f5f6fa;
+            --sidebar-bg: #fff;
+            --card-bg: #fff;
+            --card-radius: 18px;
+            --shadow: 0 8px 32px rgba(0,0,0,0.10);
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+        }
+        body {
+            min-height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+        }
+        .admin-root {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 240px;
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 12px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 0 1rem 0;
+            position: relative;
+            z-index: 2;
+        }
+        .sidebar .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 2.5rem;
+            letter-spacing: 1px;
+        }
+        .sidebar nav {
+            width: 100%;
+        }
+        .sidebar nav a {
+            display: block;
+            padding: 1rem 2rem;
+            color: #444;
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-left: 4px solid transparent;
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+        }
+        .sidebar nav a.active, .sidebar nav a:hover {
+            background: #fce4ec;
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+        .main-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .topbar {
+            height: 64px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            z-index: 1;
+        }
+        .content {
+            flex: 1;
+            padding: 2.5rem 3vw 2.5rem 3vw;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            background: var(--bg);
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem 2rem 1.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            animation: fadeIn 0.7s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: none; }
+        }
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 1.2rem;
+            font-size: 1.3rem;
+        }
+        .card ul {
+            padding-left: 0;
+            list-style: none;
+        }
+        .card li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        .card li b {
+            min-width: 70px;
+            display: inline-block;
+        }
+        .card input[type="text"], .card input[type="number"] {
+            flex: 1;
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            font-size: 1rem;
+            margin-left: 0.5rem;
+            background: #fafafa;
+            transition: border 0.2s;
+        }
+        .card input:focus {
+            border: 1.5px solid var(--primary);
+            outline: none;
+            background: #fff;
+        }
+        .card button {
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            align-self: flex-end;
+            box-shadow: 0 2px 8px rgba(233,30,99,0.08);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .card button:hover {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            box-shadow: 0 4px 16px rgba(233,30,99,0.15);
+        }
+        .admin-success {
+            display: none;
+            color: #388e3c;
+            background: #e8f5e9;
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .logout-btn {
+            background: #fff;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 0.5rem 1.2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 2rem;
+            margin-left: 2rem;
+            align-self: flex-start;
+            transition: background 0.2s, color 0.2s;
+        }
+        .logout-btn:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        /* Giriş ekranı */
+        .login-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #e91e63 0%, #ff6090 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .login-box {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            padding: 2.5rem 2.5rem 2rem 2.5rem;
+            min-width: 320px;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.7s;
+        }
+        .login-box h2 {
+            color: var(--primary);
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        .login-box input[type="password"] {
+            width: 100%;
+            padding: 0.7rem;
+            border-radius: 8px;
+            border: 1px solid #e91e63;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 0.7rem;
+            background: linear-gradient(to right, #e91e63, #ff6090);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .login-box button:hover {
+            background: linear-gradient(to right, #d81b60, #ec407a);
+        }
+        .login-error {
+            color: #e91e63;
+            background: #ffe4ec;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+        @media (max-width: 900px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                width: 60px;
+                padding: 1rem 0;
+            }
+            .sidebar .logo {
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+            }
+            .sidebar nav a {
+                font-size: 0.9rem;
+                padding: 0.7rem 1rem;
+            }
+        }
+        @media (max-width: 600px) {
+            .main-panel {
+                padding-left: 0;
+            }
+            .content {
+                padding: 1rem 0.5rem;
+            }
+            .card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-overlay" id="login-overlay">
+        <form class="login-box" id="admin-login-form">
+            <h2>Admin Girişi</h2>
+            <div class="login-error" id="admin-error"></div>
+            <button type="button" id="google-login-btn" style="background:#fff;color:#e91e63;border:1px solid #e91e63;margin-top:10px;">Google ile Giriş Yap</button>
+        </form>
+    </div>
+    <div class="admin-root" id="admin-root" style="display:none;">
+        <aside class="sidebar">
+            <div class="logo">💼 Panel</div>
+            <nav>
+                <a href="#" class="active">Burçlar</a>
+                <a href="#">İstatistikler</a>
+            </nav>
+        </aside>
+        <div class="main-panel">
+            <div class="topbar">Seviyor Sevmiyor Admin Paneli</div>
+            <div class="content">
+                <div class="card" id="card-horoscopes">
+                    <h3>Günlük Burç Mesajları</h3>
+                    <ul id="horoscope-list"></ul>
+                    <button id="save-horoscopes">Kaydet</button>
+                </div>
+                <div class="card" id="card-stats">
+                    <h3>Oyun İstatistikleri</h3>
+                    <ul>
+                        <li><b>Oyun:</b> <input type="number" id="stat-games" min="0" /></li>
+                        <li><b>En Çok Burç:</b> <input type="text" id="stat-zodiac" /></li>
+                        <li><b>En Çok Sonuç:</b> <input type="text" id="stat-result" /></li>
+                    </ul>
+                    <button id="save-stats">Kaydet</button>
+                </div>
+                <div class="card" id="card-password">
+                    <h3>Admin Şifresini Değiştir</h3>
+                    <input type="password" id="new-password" placeholder="Yeni şifre" />
+                    <button id="change-password-btn">Şifreyi Güncelle</button>
+                </div>
+            </div>
+            <div class="admin-success" id="admin-success">Başarıyla kaydedildi!</div>
+            <button class="logout-btn" id="logout-btn">Çıkış Yap</button>
+        </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB9KPNxL2x4zS9IK6IyKvH95JpVDJSY5ds",
+            authDomain: "seviyorsevmiyor-67853.firebaseapp.com",
+            projectId: "seviyorsevmiyor-67853",
+            storageBucket: "seviyorsevmiyor-67853.firebasestorage.app",
+            messagingSenderId: "970018456190",
+            appId: "1:970018456190:web:cfbf2a9156c0b0d764ce2f",
+            measurementId: "G-XQ676YZXNP"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // Burç listesini çek ve inputlara doldur
+        async function loadHoroscopes() {
+            const list = document.getElementById('horoscope-list');
+            list.innerHTML = '';
+            const burclar = [
+                'Koç','Boğa','İkizler','Yengeç','Aslan','Başak','Terazi','Akrep','Yay','Oğlak','Kova','Balık'
+            ];
+            // Firestore'dan çek
+            const querySnapshot = await getDocs(collection(db, "horoscopes"));
+            const horoscopes = {};
+            querySnapshot.forEach((doc) => {
+                horoscopes[doc.id] = doc.data().text;
+            });
+            burclar.forEach(sign => {
+                const val = horoscopes[sign] || '';
+                const li = document.createElement('li');
+                li.innerHTML = `<b>${sign}:</b> <input type='text' value="${val.replace(/"/g, '&quot;')}" data-sign="${sign}" style='width:70%;' />`;
+                list.appendChild(li);
+            });
+        }
+
+        // Kaydet butonu
+        const saveBtn = document.getElementById('save-horoscopes');
+        saveBtn.onclick = async function() {
+            const inputs = document.querySelectorAll('#horoscope-list input');
+            for (const input of inputs) {
+                const sign = input.getAttribute('data-sign');
+                const text = input.value;
+                await setDoc(doc(db, "horoscopes", sign), { text });
+            }
+            showSuccess('Burç mesajları Firestore ile kaydedildi!');
+            await loadHoroscopes();
+        };
+
+        // İstatistikler (localStorage ile)
+        const defaultStats = { games: 123, zodiac: 'Koç', result: 'Seviyor' };
+        function getStats() {
+            return JSON.parse(localStorage.getItem('admin_stats') || 'null') || {...defaultStats};
+        }
+        function setStats(obj) {
+            localStorage.setItem('admin_stats', JSON.stringify(obj));
+        }
+        function loadStats() {
+            const stats = getStats();
+            document.getElementById('stat-games').value = stats.games;
+            document.getElementById('stat-zodiac').value = stats.zodiac;
+            document.getElementById('stat-result').value = stats.result;
+        }
+        document.getElementById('save-stats').onclick = function() {
+            setStats({
+                games: parseInt(document.getElementById('stat-games').value) || 0,
+                zodiac: document.getElementById('stat-zodiac').value,
+                result: document.getElementById('stat-result').value
+            });
+            showSuccess('İstatistikler kaydedildi!');
+        };
+        function showSuccess(msg) {
+            const div = document.getElementById('admin-success');
+            div.textContent = msg;
+            div.style.display = 'block';
+            setTimeout(() => { div.style.display = 'none'; }, 2000);
+        }
+        // Panel açıldığında yükle
+        function loadPanel() {
+            loadHoroscopes();
+            loadStats();
+        }
+        // Girişte paneli yükle
+        const loginForm = document.getElementById('admin-login-form');
+        const errorDiv = document.getElementById('admin-error');
+        const loginOverlay = document.getElementById('login-overlay');
+        const adminRoot = document.getElementById('admin-root');
+
+        // Google ile giriş
+        const googleBtn = document.getElementById('google-login-btn');
+        googleBtn.onclick = async function() {
+            try {
+                await signInWithPopup(auth, provider);
+                // Giriş başarılı, paneli aç
+                loginOverlay.style.display = 'none';
+                adminRoot.style.display = 'flex';
+                errorDiv.style.display = 'none';
+                loadPanel();
+            } catch (e) {
+                errorDiv.textContent = 'Google ile giriş başarısız!';
+                errorDiv.style.display = 'block';
+            }
+        };
+
+        // Oturum kontrolü: Giriş yapılmadan panel açılmasın
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loginOverlay.style.display = 'none';
+                adminRoot.style.display = 'flex';
+                errorDiv.style.display = 'none';
+                loadPanel();
+            } else {
+                adminRoot.style.display = 'none';
+                loginOverlay.style.display = 'flex';
+            }
+        });
+
+        // Çıkış butonu
+        const logoutBtn = document.getElementById('logout-btn');
+        logoutBtn.addEventListener('click', async function() {
+            await signOut(auth);
+            adminRoot.style.display = 'none';
+            loginOverlay.style.display = 'flex';
+            document.getElementById('admin-password').value = '';
+        });
+
+        // Firestore'dan admin şifresini oku
+        async function getPasswordFromDB() {
+            const docRef = doc(db, "settings", "adminPassword");
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                return docSnap.data().value;
+            } else {
+                // Eğer yoksa varsayılan şifreyi oluştur
+                await setDoc(docRef, { value: "sifre123" });
+                return "sifre123";
+            }
+        }
+
+        // Şifre değiştirme
+        const changeBtn = document.getElementById('change-password-btn');
+        changeBtn.onclick = async function() {
+            const newPw = document.getElementById('new-password').value;
+            if (newPw.length < 4) {
+                showSuccess('Şifre en az 4 karakter olmalı!');
+                return;
+            }
+            await setDoc(doc(db, "settings", "adminPassword"), { value: newPw });
+            showSuccess('Şifre başarıyla güncellendi!');
+            document.getElementById('new-password').value = '';
+        };
+    </script>
+</body>
+</html> 

@@ -273,85 +273,18 @@ document['addEventListener']('DOMContentLoaded',function(){
         
         function _0x2c9d68(_0x2c9d69, _0x2c9d6a) {
             if (!_0x2c9d6a) return;
-            
             _0x2c9d6a.textContent = 'Burç yorumu alınıyor... ✨';
-            
-            // Daha güvenilir bir CORS proxy kullan
-            const proxy = 'https://api.allorigins.win/raw?url=';
-            
-            // Aztro API'sini kullanarak burç yorumu al
-            fetch(`${proxy}https://aztro.sameerkumar.website/?sign=${_0x2c9d69}&day=today`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Aztro API\'den burç bilgisi alınamadı');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data && data.description) {
-                    // İngilizce açıklamayı Türkçe'ye çevir ve emojiler ekle
-                    const translatedText = _0x2c9d62(data.description);
-                    _0x2c9d6a.textContent = `${translatedText} 🌟`;
-                    
-                    // Uyumlu günü ve şanslı sayıları da ekle
-                    _0x2c9d6a.textContent += `\n\nUyumlu olduğun gün: ${data.compatibility} 💞`;
-                    _0x2c9d6a.textContent += `\nŞanslı sayın: ${data.lucky_number} 🍀`;
-                    _0x2c9d6a.textContent += `\nRuh halin: ${data.mood} 😊`;
-                } else {
-                    throw new Error('API yanıtında burç bilgisi bulunamadı');
-                }
-            })
-            .catch(error => {
-                console.error('Birinci API hatası:', error);
-                
-                // Alternatif API'yi dene
-                fetch(`${proxy}https://horoscope-app-api.vercel.app/api/v1/get-horoscope/daily?sign=${_0x2c9d69}&day=TODAY`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('İkinci API\'den burç bilgisi alınamadı');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && data.data && data.data.horoscope_data) {
-                        const translatedText = _0x2c9d62(data.data.horoscope_data);
-                        _0x2c9d6a.textContent = `${translatedText} 🌟`;
-                    } else {
-                        throw new Error('İkinci API yanıtında burç bilgisi bulunamadı');
-                    }
-                })
-                .catch(secondError => {
-                    console.error('İkinci API hatası:', secondError);
-                    
-                    // Son çare: Tüm API'ler başarısız olursa, sabit veri göster
-                    console.log('Tüm API denemeleri başarısız, sabit verilere geçiliyor');
-                    
-                    // Günlük deterministik burç yorumları
-                    const _0x2c9d70 = [
-                        "Bugün yeni başlangıçlar için ideal. İçgüdülerine güven ve tüm konularda kalbini dinle. Etrafında pozitif enerji var. 🌟",
-                        "İletişim bugün öne çıkıyor. Düşüncelerini net ifade et ve başkalarını dikkatle dinle. Önemli bir mesaj gelebilir. 💬",
-                        "Bugün kişisel hedeflerine odaklan. Kararlılığın sayesinde her engelin üstesinden gelebilirsin. Başarı ulaşılabilir durumda. 🎯",
-                        "Yaratıcılığın bugün zirvede. Bu enerjiyi problemleri çözmek için kullan. Diğerleri senin yenilikçi yaklaşımını takdir edecek. ✨",
-                        "İlişkiler bugün merkez sahneyi alıyor. Bağlantılarını besle ve önemsediğin kişilere takdirini göster. ❤️",
-                        "Bugün büyüme ve öğrenme fırsatları getiriyor. Açık fikirli ol ve konfor alanının dışına çıkmaya istekli ol. 🌱",
-                        "Finansal konular bugün dikkatini gerektiriyor. Kaynaklarını gözden geçir ve geleceğin için pratik kararlar al. 💰",
-                        "Sezgilerin bugün özellikle güçlü. Karar verirken iç sesini dinle. Seni doğru yönlendirecektir. 🧠"
-                    ];
-                    
-                    // Her burç ve gün için aynı yorumu göstermek üzere deterministik seçim
-                    const today = new Date();
-                    const dateString = `${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`;
-                    const seed = dateString.length + _0x2c9d69.length * 2 + today.getDate();
-                    const randomIndex = seed % _0x2c9d70.length;
-                    
-                    _0x2c9d6a.textContent = _0x2c9d70[randomIndex];
-                });
-            });
+            // Admin panelden gelen burç mesajlarını kullan
+            let horoscopes = {};
+            try {
+                horoscopes = JSON.parse(localStorage.getItem('admin_horoscopes') || '{}');
+            } catch(e) { horoscopes = {}; }
+            if (horoscopes && horoscopes[_0x2c9d69.charAt(0).toUpperCase() + _0x2c9d69.slice(1)]) {
+                _0x2c9d6a.textContent = horoscopes[_0x2c9d69.charAt(0).toUpperCase() + _0x2c9d69.slice(1)];
+                return;
+            }
+            // Eğer admin panelden veri yoksa uyarı göster
+            _0x2c9d6a.textContent = 'Burç yorumu bulunamadı. Lütfen admin panelden ayarlayın.';
         }
         
         // İngilizce burç adlarını Türkçe'ye çevir (API için)
@@ -392,4 +325,28 @@ document['addEventListener']('DOMContentLoaded',function(){
             }
         }, 3600000); // Her saat (3600000 ms)
     }
-}); 
+});
+
+// Kullanıcıya hata mesajı göstermek için fonksiyon
+function showUserError(message) {
+    let errorDiv = document.getElementById('user-error-message');
+    if (!errorDiv) {
+        errorDiv = document.createElement('div');
+        errorDiv.id = 'user-error-message';
+        errorDiv.style.position = 'fixed';
+        errorDiv.style.top = '30px';
+        errorDiv.style.left = '50%';
+        errorDiv.style.transform = 'translateX(-50%)';
+        errorDiv.style.background = '#e91e63';
+        errorDiv.style.color = 'white';
+        errorDiv.style.padding = '12px 24px';
+        errorDiv.style.borderRadius = '12px';
+        errorDiv.style.fontSize = '1.1rem';
+        errorDiv.style.zIndex = '9999';
+        errorDiv.style.boxShadow = '0 2px 12px rgba(0,0,0,0.15)';
+        document.body.appendChild(errorDiv);
+    }
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    setTimeout(() => { errorDiv.style.display = 'none'; }, 5000);
+} 
