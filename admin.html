@@ -305,6 +305,10 @@
                         <li><b>Başlık:</b> <input type="text" id="site-title" /></li>
                         <li><b>Açıklama:</b> <input type="text" id="site-desc" /></li>
                         <li><b>Görsel URL:</b> <input type="text" id="site-img" /></li>
+                        <li><b>Anlamı:</b> <input type="text" id="site-anlami" /></li>
+                        <li><b>Nasıl Oynanır:</b> <input type="text" id="site-nasil" /></li>
+                        <li><b>Kökeni:</b> <input type="text" id="site-kokeni" /></li>
+                        <li><b>Papatya Falı:</b> <input type="text" id="site-papatya" /></li>
                     </ul>
                     <button id="save-content">Kaydet</button>
                 </div>
@@ -411,13 +415,21 @@
                     document.getElementById('site-title').value = data.title || '';
                     document.getElementById('site-desc').value = data.desc || '';
                     document.getElementById('site-img').value = data.img || '';
+                    document.getElementById('site-anlami').value = data.anlami || '';
+                    document.getElementById('site-nasil').value = data.nasil || '';
+                    document.getElementById('site-kokeni').value = data.kokeni || '';
+                    document.getElementById('site-papatya').value = data.papatya || '';
                 }
             }
             saveContentBtn.onclick = async function() {
                 await setDoc(doc(db, "settings", "content"), {
                     title: document.getElementById('site-title').value,
                     desc: document.getElementById('site-desc').value,
-                    img: document.getElementById('site-img').value
+                    img: document.getElementById('site-img').value,
+                    anlami: document.getElementById('site-anlami').value,
+                    nasil: document.getElementById('site-nasil').value,
+                    kokeni: document.getElementById('site-kokeni').value,
+                    papatya: document.getElementById('site-papatya').value
                 });
                 showSuccess('İçerik kaydedildi!');
                 await loadContent();
