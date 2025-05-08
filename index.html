@@ -831,7 +831,7 @@
     <!-- Ziyaretçi girişini Firestore'a loglamak için kod ekle -->
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyB9KPNxL2x4zS9IK6IyKvH95JpVDJSY5ds",
@@ -854,6 +854,39 @@
             // oyunSayisi: oyun sayısı burada eklenebilir (isteğe bağlı)
         });
     });
+
+    // Firestore'a yazma işlemi
+    const titleInput = document.getElementById('title');
+    const descInput = document.getElementById('desc');
+    const anlamiInput = document.getElementById('anlami');
+    const nasilInput = document.getElementById('nasil');
+    const kokeniInput = document.getElementById('kokeni');
+    const papatyaInput = document.getElementById('papatya');
+
+    const saveButton = document.getElementById('save-button');
+    saveButton.addEventListener('click', async () => {
+        const titleValue = titleInput.value;
+        const descValue = descInput.value;
+        const anlamiValue = anlamiInput.value;
+        const nasilValue = nasilInput.value;
+        const kokeniValue = kokeniInput.value;
+        const papatyaValue = papatyaInput.value;
+
+        await setDoc(doc(db, "settings/content", "title"), { value: titleValue });
+        await setDoc(doc(db, "settings/content", "desc"), { value: descValue });
+        await setDoc(doc(db, "settings/content", "anlami"), { value: anlamiValue });
+        await setDoc(doc(db, "settings/content", "nasil"), { value: nasilValue });
+        await setDoc(doc(db, "settings/content", "kokeni"), { value: kokeniValue });
+        await setDoc(doc(db, "settings/content", "papatya"), { value: papatyaValue });
+
+        // İşlem tamamlandıktan sonra işlemi bildirin veya sayfayı yeniden yüklemek için kullanın
+        alert('İçerik başarıyla kaydedildi!');
+    });
+
+    // Firestore'dan okuma işlemi
+    const titleSnap = await getDoc(doc(db, "settings/content", "title"));
+    if (titleSnap.exists()) document.getElementById('site-title').value = titleSnap.data().value || '';
+    // Diğerleri de aynı şekilde...
     </script>
     
     <!-- Baloncukları daha iyi yaymak için JS güncellemesi (baloncuk oluşturma kısmı): -->
