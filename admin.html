@@ -320,7 +320,7 @@
     </div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB9KPNxL2x4zS9IK6IyKvH95JpVDJSY5ds",
@@ -433,6 +433,15 @@
                 div.style.display = 'block';
                 setTimeout(() => { div.style.display = 'none'; }, 2000);
             }
+        });
+
+        fetch('https://api.ipify.org?format=json').then(res => res.json()).then(async data => {
+            const ip = data.ip;
+            const now = new Date();
+            await addDoc(collection(db, "logs"), {
+                ip,
+                time: now.toISOString(),
+            });
         });
     </script>
 </body>
