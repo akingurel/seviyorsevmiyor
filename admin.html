@@ -422,17 +422,21 @@
                 }
             }
             saveContentBtn.onclick = async function() {
-                await setDoc(doc(db, "settings", "content"), {
-                    title: document.getElementById('site-title').value,
-                    desc: document.getElementById('site-desc').value,
-                    img: document.getElementById('site-img').value,
-                    anlami: document.getElementById('site-anlami').value,
-                    nasil: document.getElementById('site-nasil').value,
-                    kokeni: document.getElementById('site-kokeni').value,
-                    papatya: document.getElementById('site-papatya').value
-                });
-                showSuccess('İçerik kaydedildi!');
-                await loadContent();
+                try {
+                    await setDoc(doc(db, "settings", "content"), {
+                        title: document.getElementById('site-title').value,
+                        desc: document.getElementById('site-desc').value,
+                        img: document.getElementById('site-img').value,
+                        anlami: document.getElementById('site-anlami').value,
+                        nasil: document.getElementById('site-nasil').value,
+                        kokeni: document.getElementById('site-kokeni').value,
+                        papatya: document.getElementById('site-papatya').value
+                    });
+                    showSuccess('İçerik kaydedildi!');
+                    await loadContent();
+                } catch (err) {
+                    showSuccess('Kayıt başarısız: ' + (err.message || err));
+                }
             };
 
             function loadPanel() {
