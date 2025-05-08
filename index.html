@@ -25,17 +25,17 @@
         
         @keyframes floatBubble {
             0% {
-                transform: translateY(100vh) translateX(0) scale(0.6);
+                transform: translateY(100vh) scale(0.7);
                 opacity: 0;
             }
-            20% {
+            10% {
                 opacity: 0.5;
             }
             80% {
                 opacity: 0.5;
             }
             100% {
-                transform: translateY(-20vh) translateX(20px) scale(1);
+                transform: translateY(-15vh) scale(1.1);
                 opacity: 0;
             }
         }
@@ -68,23 +68,26 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
-            z-index: -1;
+            z-index: 0;
             pointer-events: none;
         }
         
         .bg-bubble {
             position: absolute;
-            bottom: -100px;
-            background: rgba(255, 255, 255, 0.1);
+            bottom: -120px;
+            left: 0;
+            background: rgba(255, 255, 255, 0.13);
             border-radius: 50%;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(7px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.13);
+            border: 1px solid rgba(255, 255, 255, 0.22);
             opacity: 0.5;
-            animation: floatBubble 25s infinite linear;
+            z-index: 0;
+            pointer-events: none;
+            animation: floatBubble 28s infinite linear;
         }
         
         .floating-heart {
@@ -850,6 +853,28 @@
             time: now.toISOString(),
             // oyunSayisi: oyun sayısı burada eklenebilir (isteğe bağlı)
         });
+    });
+    </script>
+    
+    <!-- Baloncukları daha iyi yaymak için JS güncellemesi (baloncuk oluşturma kısmı): -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ... diğer kodlar ...
+        const bgDecorations = document.querySelector('.background-decorations');
+        // Baloncuklar
+        for (let i = 0; i < 18; i++) {
+            const size = Math.random() * 120 + 60;
+            const bubble = document.createElement('div');
+            bubble.className = 'bg-bubble';
+            bubble.style.width = `${size}px`;
+            bubble.style.height = `${size}px`;
+            bubble.style.left = `${Math.random() * 95}%`;
+            bubble.style.bottom = `${-120 + Math.random() * 40}px`;
+            bubble.style.animationDelay = `${Math.random() * 20}s`;
+            bubble.style.animationDuration = `${22 + Math.random() * 12}s`;
+            bgDecorations.appendChild(bubble);
+        }
+        // ... diğer kodlar ...
     });
     </script>
 </body>
